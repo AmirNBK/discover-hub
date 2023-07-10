@@ -2,6 +2,8 @@ import Image from 'next/image';
 import React from 'react';
 import viewImage from '../../assets/images/beatifulView.png'
 import location from '../../assets/icons/locationTwo.svg'
+import FeatureContainer from './FeatureContainer/FeatureContainer';
+import users from '../../assets/icons/3User.svg'
 
 const FeaturesSection = () => {
     return (
@@ -31,7 +33,7 @@ const FeaturesSection = () => {
             <div className='FeaturesSection__rightSection'
                 style={{ flex: '1.5' }}
             >
-
+                <FeatureContainer title='Affordable prices' description='We provide some very affordable prices compared to others.' icon={users} bgColor='var(--l-2, linear-gradient(135deg, #F9EC7D 0%, #F5B100 100%))' />
             </div>
         </div>
     );

@@ -31,7 +31,7 @@ const Footer = () => {
     ];
 
     return (
-        <div className='Footer bg-white px-20 py-20'>
+        <div className='Footer bg-white px-20 py-14'>
             <div className='Footer__company flex justify-between'>
                 <div className='Footer__logoSection flex flex-col gap-3'>
                     <div className='flex flex-row items-center gap-2'>
@@ -59,6 +59,17 @@ const Footer = () => {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            <div className='Footer__terms flex justify-between mt-10'>
+                <div>
+                    <h3> Copyright © Travala 2021 </h3>
+                </div>
+
+                <div className='Footer__terms flex gap-16'>
+                    <h4> Terms & Conditions </h4>
+                    <h4> Privacy Policy </h4>
+                </div>
             </div>
         </div>
     );

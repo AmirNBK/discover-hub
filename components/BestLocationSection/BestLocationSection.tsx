@@ -9,7 +9,7 @@ const BestLocationSection = () => {
     return (
         <div className='BestLocationSection my-12 flex flex-row z-10 relative'>
             <div className='Introduction__info my-12 flex flex-col gap-8 flex-1'>
-                <Image src={lines} alt='lines' className='absolute top-2/4 left-2/4'
+                <Image src={lines} alt='lines' className='absolute top-2/4 left-2/4 h-full'
                     style={{ zIndex: '-1', transform: 'translate(-50%, -50%)' }}
                 />
                 <h3 className='text-white text-6xl font-extrabold leading-tight'>

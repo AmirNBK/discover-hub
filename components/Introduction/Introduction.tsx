@@ -4,7 +4,7 @@ import Image from 'next/image';
 import circlePlay from '../../assets/icons/playCircle.svg'
 import pic from '../../assets/images/Traveller.png'
 import lines from '../../assets/images/lines.png'
-
+import location from '../../assets/icons/location.svg'
 
 const Introduction = () => {
     return (
@@ -23,7 +23,7 @@ const Introduction = () => {
                     With travala you can experience new travel and the best tourist destinations that we have to offer
                 </p>
                 <div className='flex flex-row'>
-                    <IntroductionButton text='Our Location' />
+                    <IntroductionButton text='Our Location' icon={location} />
                     <div className='flex flex-row items-center ml-10'
                     >
                         <div className='rounded-full flex items-center'

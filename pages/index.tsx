@@ -1,12 +1,13 @@
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import Header from '@/components/Header/Header'
 import Introduction from '@/components/Introduction/Introduction'
 import FeaturesSection from '@/components/FeaturesSection/FeaturesSection'
 import MostPopularSection from '@/components/MostPopularSection/MostPopularSection'
 import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
-import "primereact/resources/themes/lara-light-indigo/theme.css";    
-import "primereact/resources/primereact.min.css";     
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import 'primeicons/primeicons.css';
+import BestLocationSection from '@/components/BestLocationSection/BestLocationSection'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,9 @@ export default function Home() {
         </div>
         <FeaturesSection />
         <MostPopularSection />
+        <div className='HeroSection w-full pt-5 px-20' style={{ background: '#0C111F', fontFamily: 'Inter' }}>
+          <BestLocationSection />
+        </div >
       </PrimeReactProvider>
     </main>
   )

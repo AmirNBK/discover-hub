@@ -17,11 +17,13 @@
 }
 
 body {
+
+  .p-rating .p-rating-item.p-rating-item-active .p-rating-icon {
+    color: #F6973F;
+  }
+
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom,
+    transparent,
+    rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }

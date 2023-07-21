@@ -31,7 +31,7 @@ const Footer = () => {
     ];
 
     return (
-        <div className='Footer bg-white px-20 py-14'>
+        <div className='Footer bg-white px-20 pt-14 pb-6'>
             <div className='Footer__company flex justify-between'>
                 <div className='Footer__logoSection flex flex-col gap-3'>
                     <div className='flex flex-row items-center gap-2'>
@@ -39,8 +39,8 @@ const Footer = () => {
                         <p className='font-extrabold text-black'> DiscoverHub </p>
                     </div>
                     <p
-                        className='font-normal text-sm h-3/6 overflow-hidden'
-                        style={{ color: '#0C111F', opacity: '0.6000000238418579', display: '-webkit-box', WebkitLineClamp: 2 }}
+                        className='font-normal text-sm h-3/6 overflow-hidden w-9/12	'
+                        style={{ color: '#0C111F', opacity: '0.6000000238418579' }}
                     >
                         With travala you can experience new travel and the best tourist destinations that we have to offer
                     </p>
@@ -51,7 +51,7 @@ const Footer = () => {
                         <h4 className='Footer__info__title font-bold mb-4'>{info.title}</h4>
                         <div className='flex flex-col gap-2'>
                             {info.items.map((item, idx) => (
-                                <div key={idx} className='flex flex-row gap-3'>
+                                <div key={idx} className='flex flex-row gap-8'>
                                     {typeof item !== 'string' && item.icon && <Image src={item.icon} alt={item.text} />}
                                     <h4 className='text-sm'>{typeof item === 'string' ? item : item.text}</h4>
                                 </div>
@@ -61,14 +61,14 @@ const Footer = () => {
                 ))}
             </div>
 
-            <div className='Footer__terms flex justify-between mt-10'>
+            <div className='Footer__terms flex justify-between mt-28'>
                 <div>
-                    <h3> Copyright © Travala 2021 </h3>
+                    <h3 className='text-sm' style={{opacity: '0.6000000238418579'}}> Copyright © Travala 2021 </h3>
                 </div>
 
                 <div className='Footer__terms flex gap-16'>
-                    <h4> Terms & Conditions </h4>
-                    <h4> Privacy Policy </h4>
+                    <h4 className='text-sm'> Terms & Conditions </h4>
+                    <h4 className='text-sm'> Privacy Policy </h4>
                 </div>
             </div>
         </div>

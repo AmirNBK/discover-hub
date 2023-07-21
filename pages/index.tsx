@@ -9,6 +9,7 @@ import "primereact/resources/primereact.min.css";
 import 'primeicons/primeicons.css';
 import BestLocationSection from '@/components/BestLocationSection/BestLocationSection'
 import Footer from '@/components/Footer/Footer'
+import CommentSection from '@/components/CommentSection/CommentSection'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,7 +28,9 @@ export default function Home() {
         <div className='HeroSection w-full pt-5 px-20' style={{ background: '#0C111F', fontFamily: 'Inter' }}>
           <BestLocationSection />
         </div >
-
+        <div style={{ background: '#F7F7F7' }} className='w-full'>
+          <CommentSection />
+        </div>
         <div className='w-full'>
           <Footer />
         </div>

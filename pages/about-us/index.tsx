@@ -6,6 +6,7 @@ import 'primeicons/primeicons.css';
 import Header from '@/components/Header/Header';
 import AboutUsHeroSection from '@/components/AboutUsHeroSection/AboutUsHeroSection';
 import WhyChooseUs from '@/components/WhyChooseUs/WhyChooseUs';
+import Footer from '@/components/Footer/Footer';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,10 @@ export default function Home() {
                 </div>
                 <AboutUsHeroSection />
                 <WhyChooseUs />
+
+                <div className='w-full'>
+                    <Footer />
+                </div>
             </PrimeReactProvider>
         </div>
     )

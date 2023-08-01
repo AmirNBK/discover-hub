@@ -12,7 +12,7 @@ const FeatureContainer = (props: {
             style={{ borderBottom: '1px solid #F7F7F7' }}
         >
             <div>
-                <Image src={icon} alt={icon} className='w-14' />
+                <Image src={icon} alt={icon} className='w-14' unoptimized />
             </div>
             <div className='flex flex-col gap-y-3'>
                 <h3 className='font-bold text-xl capitalize'> {title} </h3>

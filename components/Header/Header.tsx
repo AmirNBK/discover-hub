@@ -7,7 +7,7 @@ const Header = () => {
     return (
         <div className='Header flex items-center justify-between'>
             <div className='Header__logoSection text-white flex flex-row items-center gap-2'>
-                <Image src={logo} alt='mainLogo' className='w-12' />
+                <Image src={logo} alt='mainLogo' className='w-12' unoptimized />
                 <p className='font-extrabold'> DiscoverHub </p>
             </div>
 

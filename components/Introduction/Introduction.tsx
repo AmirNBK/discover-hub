@@ -11,7 +11,7 @@ const Introduction = () => {
         <div className='Introduction my-12 flex flex-row z-10 relative'>
             <div className='Introduction__info my-12 flex flex-col gap-8 flex-1'>
                 <Image src={lines} alt='lines' className='absolute top-2/4 left-2/4'
-                    style={{ zIndex: '-1', transform: 'translate(-50%, -50%)' }}
+                    style={{ zIndex: '-1', transform: 'translate(-50%, -50%)' }} unoptimized
                 />
                 <p style={{ color: '#E97458' }} className='text-base font-bold uppercase'>
                     the best deals on the world's best destinations
@@ -28,7 +28,7 @@ const Introduction = () => {
                     >
                         <div className='rounded-full flex items-center'
                             style={{ background: '#ffffff2e', padding: '8px' }}>
-                            <Image src={circlePlay} alt='circlePlay'
+                            <Image src={circlePlay} alt='circlePlay' unoptimized
                             />
                         </div>
                         <p className='text-white ml-2 text-base'> Our Gallery </p>
@@ -37,7 +37,7 @@ const Introduction = () => {
             </div>
 
             <div className=' Introduction__pic' style={{ flex: '1.8' }}>
-                <Image src={pic} alt='picture' className='my-0 mx-auto' />
+                <Image src={pic} alt='picture' className='my-0 mx-auto' unoptimized />
             </div>
         </div>
     );

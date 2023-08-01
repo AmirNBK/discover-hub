@@ -25,10 +25,10 @@ const FeaturesSection = () => {
                     <div className='rounded-full absolute top-3.5 left-3.5 text-white px-3 py-3 text-sm flex items-center gap-x-1'
                         style={{ background: 'rgba(255, 255, 255, 0.22)', backdropFilter: 'blur(7.5px)' }}
                     >
-                        <Image src={location} alt='location' />
+                        <Image src={location} alt='location' unoptimized/>
                         Mazandaran
                     </div>
-                    <Image src={viewImage} alt='view' />
+                    <Image src={viewImage} alt='view' unoptimized />
                 </div>
             </div>
 

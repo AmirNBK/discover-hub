@@ -23,13 +23,13 @@ const PlacesCard = (props: {
                 <div className='rounded-full absolute top-3.5 right-3.5 text-white px-3 py-3 text-sm flex items-center gap-x-1'
                     style={{ background: 'rgba(255, 255, 255, 0.22)', backdropFilter: 'blur(7.5px)' }}
                 >
-                    <Image src={location} alt='location' />
+                    <Image src={location} alt='location' unoptimized />
                     Mazandaran
                 </div>
                 <div className='w-fit absolute top-3.5 left-3.5'>
                     <RatingComponent rating={rating} />
                 </div>
-                <Image className="w-full" src={image} alt="Sunset in the mountains" />
+                <Image className="w-full" src={image} alt="Sunset in the mountains" unoptimized />
                 <div className='rounded-full flex items-center absolute left-2/4'
                     style={{ background: '#ffffff2e', padding: '8px', top: '30%', transform: 'translate(-50%,-50%)' }}>
                     <Image src={circlePlay} alt='circlePlay' className='w-14'

@@ -2,11 +2,11 @@
   width: 27rem;
   height: 6rem;
   color: #8d8d8d;
-  background-color: #201f1f;
-  /* border-color: green; */
+  background-color: #343333;
+  border-radius: 6px;
+  border: 1px solid #8D8D8D;
   border-radius: 2px;
-  margin-bottom: 3rem;
   padding-left: 1rem;
-  padding-top: 2rem;
-  /* margin-left: 2rem; */
+  padding-top: 1rem;
+  outline: none;
 }

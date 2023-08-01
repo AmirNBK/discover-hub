@@ -4,10 +4,10 @@ const FormInput = (props: { placeholder: string; label: string }) => {
   const placeholder = props.placeholder;
   const label = props.label;
   return (
-    <div className={`${styles.mainContainer}`}>
-      <label>{label}</label>
+    <div className={`${styles.mainContainer} flex flex-col items-baseline`}>
+      <label style={{ color: '#CCC6C6' }} className="text-base">{label}</label>
       <input
-        className={`${styles.basicInput}`}
+        className={`${styles.basicInput} mt-2 placeholder:text-sm`}
         type="text"
         name="smallInput"
         placeholder={placeholder}

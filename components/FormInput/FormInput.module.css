@@ -1,14 +1,14 @@
-/* .mainContainer {
-  align-items: center;
-} */
 .basicInput {
   width: 27rem;
   height: 3.5rem;
   color: #8d8d8d;
-  background-color: #201f1f;
-  /* border-color: green; */
-  border-radius: 2px;
-  margin-bottom: 3rem;
+  background-color: #343333;
+  border-radius: 6px;
+  border: 1px solid #8D8D8D;
   padding-left: 1rem;
-  /* margin-left: 2rem; */
+  outline: none;
+}
+
+.basicInput::placeholder {
+  color: #8D8D8D;
 }

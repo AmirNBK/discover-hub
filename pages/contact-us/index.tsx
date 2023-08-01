@@ -1,50 +1,70 @@
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 import FormInput from "../../components/FormInput/FormInput";
-
+import profile from '../../assets/icons/profile.svg'
 import Image from "next/image";
 import mapPic from "../../assets/images/mapsicleMap.png";
 import TextArea from "@/components/TextArea/TextArea";
-import ContactUsButton from "@/components/CommonComponents/ContactUsButton/ContactUsButton";
+import marker from '../../assets/icons/marker.svg'
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 export default function ContactUs(props: { placeholder: string }) {
-  return (
-    <div
-      className={`ContactUs flex min-h-screen flex-col items-center ${inter.className}`}
-      style={{ background: "#0C111F" }}
-    >
-      <div
-        className="flex items-center justify-between"
-        style={{
-          width: "70%",
-          height: "36rem",
-          backgroundColor: "#343333",
-          borderRadius: "8px",
-        }}
-      >
+    return (
         <div
-          style={{ width: "100%", alignItems: "center" }}
-          className="column ,flex ,center"
+            className={`ContactUs flex min-h-screen flex-col items-center ${inter.className}`}
+            style={{ background: "#343333" }}
         >
-          <p style={{ color: "#FFFFFF", fontSize: "36px" }}>
-            Get in touch with us
-          </p>
-          <FormInput placeholder={"Full Name"} label={"Enter your name"} />
-          <FormInput placeholder={"Email Address"} label={"Enter your email"} />
-          <TextArea />
-          <ContactUsButton text="Send" />
+            <div className='HeroSection w-full pt-5 px-20' style={{ fontFamily: 'Inter' }}>
+                <Header />
+            </div>
+            <div
+                className="flex items-center justify-between pl-12 my-24"
+                style={{
+                    height: '700px',
+                    backgroundColor: "#201F1F",
+                    borderRadius: "8px",
+                }}
+            >
+                <div
+                    style={{ width: "100%" }}
+                    className="flex flex-col items-baseline gap-y-6"
+                >
+                    <p style={{ color: "#FFFFFF" }} className="text-3xl">
+                        Get in touch with us
+                    </p>
+
+                    <div className="flex flex-row gap-x-4 items-center">
+                        <Image src={profile} alt="profile" width={50} height={50} />
+                        <p className="text-white rounded-md text-xs p-2"
+                            style={{ border: '1px solid #5A5A5A', width: '70%' }}
+                        > Hi, I’m Amanda. Need help? Use the form below or email me at hello@california_golfclub.org. </p>
+                    </div>
+                    <FormInput placeholder={"Full Name"} label={"Name"} />
+                    <FormInput placeholder={"Email Address"} label={"Email"} />
+                    <TextArea />
+                    <button style={{ background: 'var(--l-2, linear-gradient(135deg, #F9EC7D 0%, #F5B100 100%))' }}
+                        className="rounded-sm px-12 py-3 text-black">
+                        Send my message
+                    </button>
+                </div>
+                <div className="w-full h-full relative">
+                    <Image alt="marker" src={marker} width={45} unoptimized className="left-1/2 top-1/2 absolute"/>
+                    <Image
+                        alt="mapPic"
+                        src={mapPic}
+                        unoptimized
+                        className="w-full h-full"
+                        style={{
+                            borderRadius: "0px 8px 8px 0px",
+                        }}
+                    />
+                </div>
+            </div>
+
+            <div className='w-full'>
+                <Footer />
+            </div>
         </div>
-        <div style={{ width: "100%" }}>
-          <Image
-            src={mapPic}
-            style={{
-              width: "100%",
-              height: "36rem",
-              borderRadius: "0px 8px 8px 0px",
-            }}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 }

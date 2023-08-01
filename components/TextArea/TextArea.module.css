@@ -1,0 +1,12 @@
+.textarea {
+  width: 27rem;
+  height: 6rem;
+  color: #8d8d8d;
+  background-color: #201f1f;
+  /* border-color: green; */
+  border-radius: 2px;
+  margin-bottom: 3rem;
+  padding-left: 1rem;
+  padding-top: 2rem;
+  /* margin-left: 2rem; */
+}

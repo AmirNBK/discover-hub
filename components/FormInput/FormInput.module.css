@@ -1,0 +1,14 @@
+/* .mainContainer {
+  align-items: center;
+} */
+.basicInput {
+  width: 27rem;
+  height: 3.5rem;
+  color: #8d8d8d;
+  background-color: #201f1f;
+  /* border-color: green; */
+  border-radius: 2px;
+  margin-bottom: 3rem;
+  padding-left: 1rem;
+  /* margin-left: 2rem; */
+}

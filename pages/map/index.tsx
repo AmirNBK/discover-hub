@@ -4,70 +4,91 @@ import { Marker, Popup } from 'react-leaflet';
 
 const Map = dynamic(() => import('../../components/Map'), { ssr: false });
 
-export default function MapContainerDynamic() {
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [nearbyLocations, setNearbyLocations] = useState([]);
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+}
+
+interface Venue {
+  fsq_id: string;
+  name: string;
+  geocodes: {
+    main: {
+      latitude: number;
+      longitude: number;
+    };
+  };
+}
+
+export default function MapContainer() {
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [data, setData] = useState<Venue[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLoc = [position.coords.latitude, position.coords.longitude];
-          setUserLocation(userLoc);
-        },
-        (error) => {
-          console.error('Error fetching user location:', error);
-        }
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    if (userLocation) {
+    const fetchData = async () => {
       const options = {
         method: 'GET',
         headers: {
           accept: 'application/json',
-          Authorization: 'fsq3W5+PONjEU/U4flpxxnxZlx85DL2PdVcUSa0/B76dyf4='
+          Authorization: 'fsq3aCgzAkodfbe6Y0mhTbwzAJVr/U+Ls6sJJjujRz/EMOs='
         }
       };
 
-      fetch('https://api.foursquare.com/v3/places/search', options)
-        .then(response => response.json())
-        .then(data => {
-          const locations = data.results; // Assuming the response structure contains "results"
-          setNearbyLocations(locations);
-          console.log(locations);
-        })
-        .catch(err => console.error('Error fetching nearby locations:', err));
-    }
-  }, [userLocation]);
+      try {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const { latitude, longitude } = position.coords;
+            setUserLocation({ latitude, longitude });
+
+            fetch(`https://api.foursquare.com/v3/places/nearby?ll=${latitude},${longitude}`, options)
+              .then(response => response.json())
+              .then(responseData => {
+                const venues: Venue[] = responseData.results || [];
+                setData(venues);
+              })
+              .catch(error => {
+                console.error('Error fetching data:', error);
+              });
+          },
+          error => {
+            console.error('Error getting user location:', error);
+          }
+        );
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(data);
+  
 
   return (
-    <div>
-      {typeof window !== 'undefined' && userLocation ? (
-        <Map width={800} height={400} center={userLocation} zoom={12}>
-          {({ TileLayer }) => (
-            <>
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-              />
-              {nearbyLocations.map(location => (
-                <Marker
-                  position={[location.geocodes.main.latitude, location.geocodes.main.longitude]}
-                >
-                  <Popup>
-                    {location.name}
-                  </Popup>
-                </Marker>
-              ))}
-            </>
+    <Map className='' width="800" height="400" center={userLocation ? [userLocation.latitude, userLocation.longitude] : [38.907132, -77.036546]} zoom={15}>
+      {({ TileLayer, Marker, Popup }) => (
+        <>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          />
+          {userLocation && (
+            <Marker position={[userLocation.latitude, userLocation.longitude]}>
+              <Popup>
+                Your location
+              </Popup>
+            </Marker>
           )}
-        </Map>
-      ) : (
-        <p>Loading user location...</p>
+          {data.map((item) => (
+            <Marker key={item.fsq_id} position={[item.geocodes.main.latitude, item.geocodes.main.longitude]}>
+              <Popup>
+                {item.name}
+              </Popup>
+            </Marker>
+          ))}
+        </>
       )}
-    </div>
+    </Map>
   );
 }

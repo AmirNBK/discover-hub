@@ -1,9 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'images.pexels.com',
+      },
+    ],
+  },
 }
 
-const withVideos = require('next-videos');
 
-module.exports = withVideos();
+// const withVideos = require('next-videos');
+
+// module.exports = withVideos();
 

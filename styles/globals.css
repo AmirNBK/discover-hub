@@ -22,6 +22,15 @@ body {
     color: #F6973F;
   }
 
+  .leaflet-popup-content {
+    width: 200px;
+    margin: 0;
+  }
+
+  .leaflet-container a.leaflet-popup-close-button {
+    display: none;
+  }
+
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom,
     transparent,

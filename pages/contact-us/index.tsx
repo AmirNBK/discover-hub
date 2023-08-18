@@ -16,7 +16,7 @@ export default function ContactUs(props: { placeholder: string }) {
             style={{ background: "#343333" }}
         >
             <div className='HeroSection w-full pt-5 px-20' style={{ fontFamily: 'Inter' }}>
-                <Header />
+                <Header active="Contact" />
             </div>
             <div
                 className="flex items-center justify-between pl-12 my-24"

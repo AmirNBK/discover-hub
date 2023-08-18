@@ -15,7 +15,7 @@ export default function Home() {
         <div className={`AboutUs flex min-h-screen flex-col items-center ${inter.className}`} style={{ background: '#0C111F' }}>
             <PrimeReactProvider>
                 <div className='HeroSection w-full py-5 px-20' style={{ background: '#0C111F', fontFamily: 'Inter' }}>
-                    <Header />
+                    <Header active='About' />
                 </div>
                 <AboutUsHeroSection />
                 <WhyChooseUs />

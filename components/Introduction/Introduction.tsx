@@ -23,7 +23,7 @@ const Introduction = () => {
                     With travala you can experience new travel and the best tourist destinations that we have to offer
                 </p>
                 <div className='flex flex-row'>
-                    <IntroductionButton text='Our Location' icon={location} />
+                    <IntroductionButton link='/map' text='Our Location' icon={location} />
                     <div className='flex flex-row items-center ml-10'
                     >
                         <div className='rounded-full flex items-center'

@@ -63,7 +63,7 @@ const Footer = () => {
 
             <div className='Footer__terms flex justify-between mt-28'>
                 <div>
-                    <h3 className='text-sm' style={{opacity: '0.6000000238418579'}}> Copyright © Travala 2021 </h3>
+                    <h3 className='text-sm' style={{opacity: '0.6000000238418579'}}> Copyright © Travala 2023 </h3>
                 </div>
 
                 <div className='Footer__terms flex gap-16'>

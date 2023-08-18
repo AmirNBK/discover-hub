@@ -19,7 +19,7 @@ const BestLocationSection = () => {
                     We have a variety of the world's best locations that you can choose as your next destination
                 </p>
                 <div className='flex flex-row'>
-                    <IntroductionButton text='Contact Now' icon={call} />
+                    <IntroductionButton link='/contact-us' text='Contact Now' icon={call} />
                 </div>
             </div>
 

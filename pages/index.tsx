@@ -20,7 +20,7 @@ export default function Home() {
     >
       <PrimeReactProvider>
         <div className='HeroSection w-full pt-5 px-20' style={{ background: '#0C111F', fontFamily: 'Inter' }}>
-          <Header />
+          <Header active='Home' />
           <Introduction />
         </div>
         <FeaturesSection />

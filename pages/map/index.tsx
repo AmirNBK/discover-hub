@@ -12,6 +12,7 @@ import "leaflet/dist/leaflet.css";
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Paper from '@mui/material/Paper';
+import Header from '@/components/Header/Header';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -33,7 +34,6 @@ interface Venue {
 }
 
 export default function MapContainer() {
-  // const classes = useStyles();
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [data, setData] = useState<Venue[]>([]);
   const [pics, setPics] = useState<any>()

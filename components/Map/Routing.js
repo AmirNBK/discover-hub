@@ -11,15 +11,16 @@ L.Marker.prototype.options.icon = L.icon({
 const Routing = ({ sourceCity, destinationCity }) => {
     const map = useMap();
 
-    useEffect(() => {
-        if (!map) return;
+    console.log(sourceCity.latitude, destinationCity.longitude);
 
-        console.log(sourceCity, destinationCity);
-        if (sourceCity?.lat !== undefined && destinationCity?.lat !== undefined) {
+    useEffect(() => {
+        if (!map) console.log('error');
+        if (sourceCity.latitude !== undefined && destinationCity.longitude !== undefined) {
+            console.log('correct');
             const routingControl = L.Routing.control({
                 waypoints: [
-                    L.latLng(parseFloat(sourceCity.latitude), parseFloat(sourceCity.longitude)),
-                    L.latLng(parseFloat(destinationCity.lat), parseFloat(destinationCity.lng))
+                    L.latLng((sourceCity.latitude), (sourceCity.longitude)),
+                    L.latLng((destinationCity.latitude), (destinationCity.longitude))
                 ],
                 routeWhileDragging: true,
                 lineOptions: {

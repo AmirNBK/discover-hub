@@ -1,22 +1,31 @@
 import React from 'react';
 import logo from '../../assets/icons/mainLogo.svg'
 import Image from 'next/image';
+import Link from 'next/link';
 
-const Header = () => {
-    const pages = ['Home', 'About', 'Destination', 'Contact']
+const Header = (props: {
+    active: string
+}) => {
+    const active = props.active
+    const pages = [
+        { title: 'Home', link: '/' },
+        { title: 'Map', link: '/map' },
+        { title: 'About', link: '/about-us' },
+        { title: 'Contact', link: '/contact-us' }
+    ];
     return (
-        <div className='Header flex items-center justify-between'>
-            <div className='Header__logoSection text-white flex flex-row items-center gap-2'>
+        <div className='Header flex items-center justify-between' style={{zIndex : '3000000000'}}>
+            <Link href={'/'} className='Header__logoSection text-white flex flex-row items-center gap-2'>
                 <Image src={logo} alt='mainLogo' className='w-12' unoptimized />
                 <p className='font-extrabold'> DiscoverHub </p>
-            </div>
+            </Link>
 
             <div className='Header__pagesSection flex gap-6 text-white text-sm'>
-                {pages.map((item: string, index: number) => {
+                {pages.map((item: { title: string; link: string }, index: number) => {
                     return (
-                        <div>
-                            {index === 0 ? <p className='text-white font-bold cursor-pointer'> {item} </p> :
-                                <p className='font-normal cursor-pointer' style={{ color: '#ffffff99' }}> {item} </p>}
+                        <div className='cursor-pointer'>
+                            <Link href={item.link} className={` ${item.title === active ? 'font-bold' : 'font-normal'}`}
+                                style={{ color: item.title === active ? '#fff' : '#ffffff99' }}> {item.title} </Link>
                         </div>
                     )
                 })}

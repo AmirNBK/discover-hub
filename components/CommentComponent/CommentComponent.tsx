@@ -14,7 +14,10 @@ const CommentComponent = (props: {
 
     return (
         <div className='bg-white p-6 flex flex-col gap-3'
-            style={{ borderRadius: '20px', backdropFilter: 'blur(5.5px)', width: '558px', height: '238px' , boxShadow : '0px 1px 4px 0px rgba(0,0,0,0.1)' }}
+            style={{
+                borderRadius: '20px', backdropFilter: 'blur(5.5px)', width: '558px', height: '238px',
+                boxShadow: '0px 1px 4px 0px rgba(0,0,0,0.1)', transform: 'translateY(25px)'
+            }}
         >
             <Image src={user} alt='user' unoptimized className='rounded-full' />
             <h3 className='font-bold text-xl'> {name} </h3>

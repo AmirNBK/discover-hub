@@ -13,6 +13,19 @@ const MostPopularSection = () => {
         description: string;
     }
 
+    const responsiveOptions = [
+        {
+            breakpoint: '1300px',
+            numVisible: 1,
+            numScroll: 1
+        },
+        {
+            breakpoint: '1000px',
+            numVisible: 1,
+            numScroll: 1
+        }
+    ];
+
     const locations: Informations[] = [
         {
             location: 'Kerman',
@@ -79,7 +92,7 @@ const MostPopularSection = () => {
             </h1>
             <div className="card">
                 <Carousel value={locations} numVisible={3} numScroll={3} className="custom-carousel" circular
-                    autoplayInterval={3000} itemTemplate={locationsTemplate} showIndicators={false} />
+                    autoplayInterval={3000} itemTemplate={locationsTemplate} showIndicators={false} responsiveOptions={responsiveOptions} />
             </div>
         </div>
     );

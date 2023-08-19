@@ -29,17 +29,17 @@ const CommentSection = () => {
     };
 
     return (
-        <div className='CommentSection py-16 flex flex-row justify-evenly'
+        <div className='CommentSection py-16 flex lg:flex-row flex-col-reverse justify-evenly'
         >
-            <div className="card">
+            <div className="card flex lg:justify-start justify-center lg:ml-12">
                 <Carousel value={comments} numVisible={1} numScroll={1} className="custom-carousel" circular
                     autoplayInterval={3000} itemTemplate={CommentsTemplate} showIndicators={false} orientation="vertical" />
             </div>
-            <div className='flex flex-col ml-12'>
-                <h2 className='text-5xl w-8/12 font-bold leading-tight'>
+            <div className='flex flex-col mx-auto lg:text-left items-center text-center'>
+                <h2 className='text-3xl sm:text-5xl w-fit sm:w-8/12 font-bold leading-tight'>
                     Testimonials Travala Customers
                 </h2>
-                <h2 className='text-xl mt-12 w-8/12'
+                <h2 className='text-base sm:text-xl mt-12 w-8/12'
                     style={{ opacity: '0.6000000238418579', color: '#0C111F' }}>
                     What our customers have to say about our service, check it out!
                 </h2>

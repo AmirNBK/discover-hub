@@ -9,14 +9,14 @@ import heart from '../../assets/icons/Heart.svg'
 
 const FeaturesSection = () => {
     return (
-        <div className='FeaturesSection w-full flex px-10 my-10 gap-x-20'>
-            <div className='FeaturesSection__leftSection flex flex-col flex-1 gap-y-5'>
+        <div className='FeaturesSection w-full flex px-10 my-10 gap-x-20 lg:flex-row flex-col'>
+            <div className='FeaturesSection__leftSection lg:items-start items-center lg:text-left text-center flex flex-col flex-1 gap-y-5'>
                 <h2
-                    className='text-4xl font-bold w-8/12'
+                    className='text-2xl md:text-4xl font-bold w-8/12'
                     style={{ color: '#0C111F', lineHeight: '180%' }}
                 > Get Experience Which are fun </h2>
                 <p
-                    className='font-normal w-10/12'
+                    className='md:text-base text-sm font-normal w-10/12'
                     style={{ color: '#0C111F', opacity: '0.6000000238418579' }}
                 >
                     With DiscoverHub you can get the best experience on holiday travel, and we always update the latest and best destinations in the world
@@ -32,7 +32,7 @@ const FeaturesSection = () => {
                 </div>
             </div>
 
-            <div className='FeaturesSection__rightSection flex flex-col justify-around flex-1'
+            <div className='FeaturesSection__rightSection lg:m-0 mt-16 flex flex-col justify-around flex-1'
             >
                 <FeatureContainer title='Affordable prices' description='We provide some very affordable prices compared to others.' icon={wallet} />
                 <FeatureContainer title='Unforgettable experience' description='We provide a vacation experience that will be unforgettable.' icon={users} />

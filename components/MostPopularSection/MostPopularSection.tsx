@@ -87,7 +87,7 @@ const MostPopularSection = () => {
 
     return (
         <div className='MostPopularSection w-full px-10 my-10'>
-            <h1 className='text-3xl font-bold items-left'>
+            <h1 className='text-3xl font-bold items-left md:text-left text-center'>
                 Destinations Most Popular
             </h1>
             <div className="card">

@@ -13,9 +13,9 @@ const CommentComponent = (props: {
     const description = props.description
 
     return (
-        <div className='bg-white p-6 flex flex-col gap-3'
+        <div className='bg-white p-6 flex flex-col gap-3 w-330 sm:w-558 mx-auto sm:text-left text-center sm:items-baseline items-center'
             style={{
-                borderRadius: '20px', backdropFilter: 'blur(5.5px)', width: '558px', height: '238px',
+                borderRadius: '20px', backdropFilter: 'blur(5.5px)', height: '238px',
                 boxShadow: '0px 1px 4px 0px rgba(0,0,0,0.1)', transform: 'translateY(25px)'
             }}
         >

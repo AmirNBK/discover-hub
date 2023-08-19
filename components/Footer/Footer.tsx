@@ -32,7 +32,7 @@ const Footer = () => {
 
     return (
         <div className='Footer bg-white px-20 pt-14 pb-6'>
-            <div className='Footer__company flex justify-between'>
+            <div className='Footer__company flex flex-wrap gap-16 justify-between'>
                 <div className='Footer__logoSection flex flex-col gap-3'>
                     <div className='flex flex-row items-center gap-2'>
                         <Image src={logo} alt='mainLogo' className='w-12' />
@@ -61,7 +61,7 @@ const Footer = () => {
                 ))}
             </div>
 
-            <div className='Footer__terms flex justify-between mt-28'>
+            <div className='Footer__terms flex-wrap gap-8 flex justify-between mt-28'>
                 <div>
                     <h3 className='text-sm' style={{opacity: '0.6000000238418579'}}> Copyright © Travala 2023 </h3>
                 </div>

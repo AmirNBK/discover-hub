@@ -25,14 +25,14 @@ const Introduction = () => {
                 </p>
                 <div className='flex flex-col gap-2 sm:gap-0 sm:m-0 mx-auto sm:items-center sm:flex-row justify-center xl:justify-start '>
                     <IntroductionButton link='/map' text='Our Location' icon={location} />
-                    <div className='flex flex-row items-center m-0 justify-center sm:ml-10'
+                    <div className='flex flex-row items-center mt-3 justify-center sm:ml-10'
                     >
                         <div className='rounded-full flex items-center text-xs sm:text-base'
                             style={{ background: '#ffffff2e', padding: '8px' }}>
                             <Image src={circlePlay} alt='circlePlay' unoptimized
                             />
                         </div>
-                        <p className='text-white m-0 sm:ml-2 sm:text-base'> Our Gallery </p>
+                        <p className='text-white ml-1 sm:ml-2 sm:text-base'> Our Gallery </p>
                     </div>
                 </div>
             </div>

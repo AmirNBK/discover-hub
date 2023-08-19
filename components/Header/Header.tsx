@@ -32,8 +32,8 @@ const Header = (props: {
             </div>
 
             <div className='Header__signInSection flex items-center gap-4'>
-                <p className='text-white text-sm'> Register </p>
-                <button className='bg-white font-bold rounded-full py-2	px-8'> Login </button>
+                <p className='text-white text-xs md:text-sm'> Register </p>
+                <button className='bg-white font-bold text-xs md:text-sm rounded-full py-2	px-8'> Login </button>
             </div>
         </div>
     );

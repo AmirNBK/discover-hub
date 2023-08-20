@@ -9,6 +9,13 @@
   outline: none;
 }
 
+
+@media screen and (max-width:640px) {
+  .basicInput {
+    width: 20rem;
+  }
+}
+
 .basicInput::placeholder {
   color: #8D8D8D;
 }

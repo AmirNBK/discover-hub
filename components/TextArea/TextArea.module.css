@@ -10,3 +10,9 @@
   padding-top: 1rem;
   outline: none;
 }
+
+@media screen and (max-width:640px) {
+  .textarea {
+    width: 20rem;
+  }
+}

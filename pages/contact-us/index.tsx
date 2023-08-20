@@ -19,10 +19,9 @@ export default function ContactUs(props: { placeholder: string }) {
                 <Header active="Contact" />
             </div>
             <div
-                className="flex items-center justify-between pl-12 my-24"
+                className="flex items-center justify-between pl-6 sm:pl-12 my-6 sm:my-24 sm:bg-black-primary"
                 style={{
                     height: '700px',
-                    backgroundColor: "#201F1F",
                     borderRadius: "8px",
                 }}
             >
@@ -48,7 +47,7 @@ export default function ContactUs(props: { placeholder: string }) {
                         Send my message
                     </button>
                 </div>
-                <div className="w-full h-full relative">
+                <div className="w-full h-full relative lg:block hidden">
                     <Image alt="marker" src={marker} width={45} unoptimized className="left-1/2 top-1/2 absolute"/>
                     <Image
                         alt="mapPic"

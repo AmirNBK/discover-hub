@@ -19,7 +19,10 @@ module.exports = {
         '558': '558px',
         '330': '330px',
 
-      }
+      },
+      colors: {
+        'black-primary': '#201F1F',
+      },
     },
   },
   plugins: [],

@@ -14,7 +14,7 @@ const Header = (props: {
         { title: 'Contact', link: '/contact-us' }
     ];
     return (
-        <div className='Header flex-col gap-6 md:flex-row flex items-center justify-between' style={{zIndex : '3000000000'}}>
+        <div className='Header flex-col gap-6 md:flex-row flex items-center justify-between' style={{ zIndex: '3000000000' }}>
             <Link href={'/'} className='Header__logoSection text-white flex flex-row items-center gap-2'>
                 <Image src={logo} alt='mainLogo' className='w-12' unoptimized />
                 <p className='font-extrabold'> DiscoverHub </p>
@@ -32,8 +32,12 @@ const Header = (props: {
             </div>
 
             <div className='Header__signInSection flex items-center gap-4'>
-                <p className='text-white text-xs md:text-sm'> Register </p>
-                <button className='bg-white font-bold text-xs md:text-sm rounded-full py-2	px-8'> Login </button>
+                <Link href={'/sign-up'}>
+                    <p className='text-white text-xs md:text-sm cursor-pointer'> Register </p>
+                </Link>
+                <Link href={'/login'}>
+                    <button className='bg-white font-bold text-xs md:text-sm rounded-full py-2	px-8'> Login </button>
+                </Link>
             </div>
         </div>
     );

@@ -1,6 +1,5 @@
 import axios from "axios";
-
-export const url = 'https://gardeshbackend.darkube.app/api/v1/';
+export const url = 'https://gardeshgaribackend.darkube.app/api/v1/';
 export const base_url = url;
 
 let defaultApi = axios.create({

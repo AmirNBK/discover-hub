@@ -6,14 +6,19 @@ import RatingComponent from '../RatingComponent/RatingComponent';
 
 const PlacesCard = (props: {
     title: string
-    description: string
     image: StaticImageData
-    rating : number
+    rating: number
+    state: string
+    category: string
+    address: string
+    location: any
 }) => {
     const title = props.title
-    const description = props.description
     const image = props.image
     const rating = props.rating
+    const state = props.state
+    const category = props.category
+    const address = props.address
 
     return (
         <div className={`PlacesCardContainer relative`}>
@@ -24,7 +29,7 @@ const PlacesCard = (props: {
                     style={{ background: 'rgba(255, 255, 255, 0.22)', backdropFilter: 'blur(7.5px)' }}
                 >
                     <Image src={location} alt='location' unoptimized />
-                    Mazandaran
+                    {state}
                 </div>
                 <div className='w-fit absolute top-3.5 left-3.5'>
                     <RatingComponent rating={rating} />
@@ -36,9 +41,9 @@ const PlacesCard = (props: {
                     />
                 </div>
                 <div className="px-6 py-4">
-                    <div className="font-bold text-xl mb-2 text-left" style={{ color: '#0C111F' }}>{title}</div>
+                    <div className="text-xl mb-2 text-center font-normal" style={{ color: '#0C111F' }}>{title}</div>
                     <p className="text-gray-700 text-base text-left">
-                        {description}
+                        one of the best {category} of {state} that is addressed on {address}
                     </p>
                 </div>
                 <button className=" text-xl font-normal text-white w-fit mx-auto my-0 rounded-full mb-4"

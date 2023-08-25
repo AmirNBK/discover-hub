@@ -9,10 +9,7 @@ import { createClient } from 'pexels';
 const Map = dynamic(() => import('../../components/Map'), { ssr: false });
 const Routing = dynamic(() => import("../../components/Map/Routing"), { ssr: false });
 import "leaflet/dist/leaflet.css";
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Paper from '@mui/material/Paper';
-import Header from '@/components/Header/Header';
+import { fetchUserLocationAndData } from '@/components/fetchLocations/fetchLocations';
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -50,40 +47,7 @@ export default function MapContainer() {
     client.photos.search({ query, per_page: 10 }).then(photos => {
       setPics(photos)
     });
-    const fetchData = async () => {
-      const options = {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          Authorization: 'fsq3aCgzAkodfbe6Y0mhTbwzAJVr/U+Ls6sJJjujRz/EMOs='
-        }
-      };
-      try {
-        navigator.geolocation.getCurrentPosition(
-          position => {
-            const { latitude, longitude } = position.coords;
-            setUserLocation({ latitude, longitude });
-
-            fetch(`https://api.foursquare.com/v3/places/nearby?ll=${latitude},${longitude}`, options)
-              .then(response => response.json())
-              .then(responseData => {
-                const venues: Venue[] = responseData.results || [];
-                setData(venues);
-              })
-              .catch(error => {
-                console.error('Error fetching data:', error);
-              });
-          },
-          error => {
-            console.error('Error getting user location:', error);
-          }
-        );
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
+    fetchUserLocationAndData(setUserLocation, setData);
   }, []);
 
   return (

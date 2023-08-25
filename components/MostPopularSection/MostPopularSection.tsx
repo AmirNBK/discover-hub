@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Carousel } from 'primereact/carousel';
 import PlacesCard from '../CommonComponents/PlacesCard/PlacesCard';
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import image from '../../assets/images/image1.png'
+import { createClient } from 'pexels';
 
-const MostPopularSection = () => {
+const MostPopularSection = (props: {
+    data: any
+}) => {
+    const [pics, setPics] = useState<any>()
+    const query = 'locations';
+    const client = createClient('XZYowhK5D5FH0PTSgEWfcbWGtK2v1gLVuROLcUowriW39LIhI1jV3qa2');
+    const data = props.data
+    
     interface Informations {
-        location: string;
+        name: string;
         rating: number;
         City: string;
         description: string;
@@ -26,61 +34,14 @@ const MostPopularSection = () => {
         }
     ];
 
-    const locations: Informations[] = [
-        {
-            location: 'Kerman',
-            rating: 4,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Gilan',
-            rating: 4.5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Shiraz',
-            rating: 5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Gilan',
-            rating: 5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Kerman',
-            rating: 4,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Gilan',
-            rating: 4.5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Shiraz',
-            rating: 5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-        {
-            location: 'Gilan',
-            rating: 5,
-            City: 'Rasht',
-            description: 'One of the most beautiful places that you can find in iran , a paradise you can never imagine',
-        },
-    ];
 
     const locationsTemplate = (locations: Informations) => {
         return (
             <div className={`CardsContainer flex flex-row w-full my-12 justify-center`}>
-                <PlacesCard title={locations.location} description={locations.description} footerText='More' image={image} />
+                <PlacesCard title={locations.name} footerText='More' image={image}
+                    state={locations?.location.locality || locations?.location.region} category={locations.categories[0].name}
+                    address={locations.location.formatted_address}
+                />
             </div>
         );
     };
@@ -91,8 +52,9 @@ const MostPopularSection = () => {
                 Destinations Most Popular
             </h1>
             <div className="card">
-                <Carousel value={locations} numVisible={3} numScroll={3} className="custom-carousel" circular
-                    autoplayInterval={3000} itemTemplate={locationsTemplate} showIndicators={false} responsiveOptions={responsiveOptions} />
+                <Carousel value={data} numVisible={3} numScroll={3} className="custom-carousel" circular
+                    itemTemplate={locationsTemplate} showIndicators={false}
+                    responsiveOptions={responsiveOptions} />
             </div>
         </div>
     );

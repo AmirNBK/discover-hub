@@ -7,7 +7,7 @@ import lines from '../../assets/images/lines.png'
 import location from '../../assets/icons/location.svg'
 
 const Introduction = () => {
-    
+
     return (
         <div className='Introduction my-6 xl:my-12 flex flex-row z-10 relative'>
             <div className='Introduction__info my-12 flex flex-col gap-8 flex-1'>
@@ -38,7 +38,7 @@ const Introduction = () => {
             </div>
 
             <div className=' Introduction__pic hidden xl:block' style={{ flex: '1.8' }}>
-                <Image src={pic} alt='picture' className='my-0 mx-auto' unoptimized />
+                <Image src={pic} alt='picture' className='my-0 mx-auto' unoptimized width={617} height={617} />
             </div>
         </div>
     );

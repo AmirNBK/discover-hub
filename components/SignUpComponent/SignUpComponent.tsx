@@ -37,8 +37,7 @@ const SignUpComponent = () => {
                     localStorage.setItem('accessToken', res.data.access)
                     showSuccess('Signed up successfully');
                 }
-                else showError(res.response.data.error)
-
+                else console.log(res);
             });
     };
 

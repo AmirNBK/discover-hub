@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Inter } from 'next/font/google'
 import Header from '@/components/Header/Header'
 import Introduction from '@/components/Introduction/Introduction'
@@ -10,10 +11,35 @@ import 'primeicons/primeicons.css';
 import BestLocationSection from '@/components/BestLocationSection/BestLocationSection'
 import Footer from '@/components/Footer/Footer'
 import CommentSection from '@/components/CommentSection/CommentSection'
+import { fetchUserLocationAndData } from '../components/fetchLocations/fetchLocations'
 
 const inter = Inter({ subsets: ['latin'] })
 
+interface UserLocation {
+  latitude: number;
+  longitude: number;
+}
+
+interface Venue {
+  fsq_id: string;
+  name: string;
+  geocodes: {
+    main: {
+      latitude: number;
+      longitude: number;
+    };
+  };
+}
+
 export default function Home() {
+
+  const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
+  const [data, setData] = useState<Venue[]>([]);
+
+  useEffect(() => {
+    fetchUserLocationAndData(setUserLocation, setData);
+  }, []);
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between bg-white ${inter.className}`}
@@ -24,7 +50,7 @@ export default function Home() {
           <Introduction />
         </div>
         <FeaturesSection />
-        <MostPopularSection />
+        <MostPopularSection data={data} />
         <div className='HeroSection w-full pt-5 px-20' style={{ background: '#0C111F', fontFamily: 'Inter' }}>
           <BestLocationSection />
         </div >

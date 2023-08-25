@@ -11,8 +11,6 @@ L.Marker.prototype.options.icon = L.icon({
 const Routing = ({ sourceCity, destinationCity }) => {
     const map = useMap();
 
-    console.log(sourceCity.latitude, destinationCity.longitude);
-
     useEffect(() => {
         if (!map) console.log('error');
         if (sourceCity.latitude !== undefined && destinationCity.longitude !== undefined) {

@@ -22,7 +22,7 @@ const CommentSection = () => {
         }
     ];
 
-    const CommentsTemplate = (comments) => {
+    const CommentsTemplate = (comments: any) => {
         return (
             <CommentComponent name={comments.name} rating={comments.rating} description={comments.description} />
         );

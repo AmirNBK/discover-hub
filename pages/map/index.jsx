@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Inter } from 'next/font/google'
-import { Marker, Popup } from 'react-leaflet';
+import { TileLayer, Marker, Popup } from 'react-leaflet';
 import Image from 'next/image';
 import location from '../../assets/icons/location2.svg'
 import pic from '../../assets/images/place.jpg'
@@ -14,32 +14,17 @@ import { fetchUserLocationAndData } from '@/components/fetchLocations/fetchLocat
 
 const inter = Inter({ subsets: ['latin'] })
 
-interface UserLocation {
-  latitude: number;
-  longitude: number;
-}
-
-interface Venue {
-  fsq_id: string;
-  name: string;
-  geocodes: {
-    main: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-}
 
 export default function MapContainer() {
-  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
-  const [data, setData] = useState<Venue[]>([]);
-  const [pics, setPics] = useState<any>()
+  const [userLocation, setUserLocation] = useState < UserLocation | null > (null);
+  const [data, setData] = useState([]);
+  const [pics, setPics] = useState()
   const [selectedCity, setSelectedCity] = useState({});
 
   const client = createClient('XZYowhK5D5FH0PTSgEWfcbWGtK2v1gLVuROLcUowriW39LIhI1jV3qa2');
   const query = 'locations';
 
-  const handleLocationSelect = (latitude: number, longitude: number) => {
+  const handleLocationSelect = (latitude, longitude) => {
     setSelectedCity({ latitude, longitude });
   };
 

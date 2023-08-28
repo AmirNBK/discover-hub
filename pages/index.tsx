@@ -15,11 +15,6 @@ import { fetchUserLocationAndData } from '../components/fetchLocations/fetchLoca
 
 const inter = Inter({ subsets: ['latin'] })
 
-interface UserLocation {
-  latitude: number;
-  longitude: number;
-}
-
 interface Venue {
   fsq_id: string;
   name: string;

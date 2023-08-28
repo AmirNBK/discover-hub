@@ -13,12 +13,20 @@ const MostPopularSection = (props: {
     const query = 'locations';
     const client = createClient('XZYowhK5D5FH0PTSgEWfcbWGtK2v1gLVuROLcUowriW39LIhI1jV3qa2');
     const data = props.data
-    
+
     interface Informations {
         name: string;
         rating: number;
         City: string;
         description: string;
+        location: {
+            locality: string;
+            region: string;
+            formatted_address: string;
+        };
+        categories: {
+            name: string;
+        }[];
     }
 
     const responsiveOptions = [
@@ -36,11 +44,12 @@ const MostPopularSection = (props: {
 
 
     const locationsTemplate = (locations: Informations) => {
+        const randomRating = Math.floor(Math.random() * 5) + 1;
         return (
             <div className={`CardsContainer flex flex-row w-full my-12 justify-center`}>
-                <PlacesCard title={locations.name} footerText='More' image={image}
+                <PlacesCard title={locations.name} image={image}
                     state={locations?.location.locality || locations?.location.region} category={locations.categories[0].name}
-                    address={locations.location.formatted_address}
+                    address={locations.location.formatted_address} rating={randomRating} location={''}
                 />
             </div>
         );

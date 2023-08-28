@@ -12,7 +12,7 @@ const AboutUsHeroSection = () => {
                     We just made finding everything easier
                 </h3>
                 <h4 className='text-sm sm:text-base font-medium text-white xl:text-left text-center'>
-                    Whether you're at home or on the go, finding your next adventure is now simpler than ever. With just a click or a touch, unlock a world of possibilities and uncover nearby wonders waiting to be explored.
+                    Whether you are at home or on the go, finding your next adventure is now simpler than ever. With just a click or a touch, unlock a world of possibilities and uncover nearby wonders waiting to be explored.
                 </h4>
                 <div className='flex justify-center xl:justify-start'>
                 <IntroductionButton text='Get started' icon={arrow} />

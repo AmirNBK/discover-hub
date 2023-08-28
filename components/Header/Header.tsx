@@ -24,7 +24,7 @@ const Header = (props: {
             <div className='Header__pagesSection flex gap-6 text-white text-sm'>
                 {pages.map((item: { title: string; link: string }, index: number) => {
                     return (
-                        <div className='cursor-pointer'>
+                        <div className='cursor-pointer' key={index}>
                             <Link href={item.link} className={` ${item.title === active ? 'font-bold' : 'font-normal'}`}
                                 style={{ color: item.title === active ? '#fff' : '#ffffff99' }}> {item.title} </Link>
                         </div>

@@ -16,7 +16,7 @@ const BestLocationSection = () => {
                     We are ready to provide the best locations
                 </h3>
                 <p className='text-sm sm:text-lg lg:text-left text-center' style={{ color: '#ffffffb3' }}>
-                    We have a variety of the world's best locations that you can choose as your next destination
+                    We have a variety of the worlds best locations that you can choose as your next destination
                 </p>
                 <div className='flex flex-row lg:justify-start justify-center'>
                     <IntroductionButton link='/contact-us' text='Contact Now' icon={call} />

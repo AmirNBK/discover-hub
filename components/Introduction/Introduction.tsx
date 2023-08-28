@@ -15,7 +15,7 @@ const Introduction = () => {
                     style={{ zIndex: '-1', transform: 'translate(-50%, -50%)' }} unoptimized
                 />
                 <p style={{ color: '#E97458' }} className='text-center xl:text-left text-xs sm:text-base font-bold uppercase'>
-                    the best deals on the world's best destinations
+                    the best deals on the worlds best destinations
                 </p>
                 <h3 className='text-center xl:text-left text-white text-4xl sm:text-7xl' style={{ fontFamily: 'Volkhov' }}>
                     Best travel and destinations

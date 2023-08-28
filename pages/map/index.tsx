@@ -34,8 +34,11 @@ interface Venue {
   distance?: number;
 }
 
-
-
+type MapProps = {
+  TileLayer: any;
+  Marker: any;
+  Popup: number;
+};
 
 export default function MapContainer() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);

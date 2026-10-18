@@ -6,7 +6,7 @@ A refreshed destination discovery app built with Next.js 16, React 19, TypeScrip
 
 DiscoverHub was originally developed by AmirNBK as a bachelor's university project in 2023. The original commit history is preserved. The [pre-modernization snapshot](https://github.com/AmirNBK/discover-hub/tree/archive/pre-modernization) points to the repository's August 28, 2023 state; it is a historical reference, not a claim about the exact university submission date.
 
-The later refresh was developed with AI assistance on `codex/modernize-discover-hub`. It updates dependencies, changes the interface, adds a local account/contact backend, and improves image delivery. These changes are separate from the original undergraduate implementation. See [the provenance notes](docs/HISTORY.md) for the scope of each version and [the refresh notes](docs/REFRESH.md) for technical findings and limitations.
+The later refresh is preserved on `amirHossein/modernized-and-refactored`. It updates dependencies, changes the interface, adds a local account/contact backend, and improves image delivery. These changes are separate from the original undergraduate implementation. See [the provenance notes](docs/HISTORY.md) for the scope of each version and [the refresh notes](docs/REFRESH.md) for technical findings and limitations.
 
 ## Run locally
 

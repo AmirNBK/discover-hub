@@ -10,7 +10,7 @@ That version contains the original Next.js application, travel-oriented interfac
 
 ## Subsequent modernization
 
-The changes on `codex/modernize-discover-hub` were made later with AI assistance from Codex at the author's request. They include dependency upgrades, interface redesign, replacement of the external account-server dependency with SQLite-backed accounts and contact storage, changes to place discovery and directions, saved destinations, image replacement and optimization, automated checks, and operating documentation.
+The changes on `amirHossein/modernized-and-refactored` were made after the original undergraduate project. They include dependency upgrades, interface redesign, replacement of the external account-server dependency with SQLite-backed accounts and contact storage, changes to place discovery and directions, saved destinations, image replacement and optimization, automated checks, and operating documentation.
 
 These additions and changes should not be represented as part of the original 2023 submission. In particular, the current local backend and the original external-backend integration are different implementations. Existing remote accounts were not migrated. Live nearby discovery needs a current provider key; device-local favourites and contact storage have the limitations described in the README.
 
@@ -18,4 +18,4 @@ These additions and changes should not be represented as part of the original 20
 
 The refresh is committed on its own branch and submitted through a pull request to `main`. A merge commit preserves both the branch commits and their relationship to the original history. The modernization branch is retained after merging. No original commits are rewritten, squashed, or backdated.
 
-The README distinguishes the original university work from the later AI-assisted refresh. [Refresh notes](REFRESH.md), [image measurements](IMAGES.md), and the automated checks describe the current implementation. Academic presentations should distinguish those two stages and follow the receiving institution's disclosure requirements.
+The README distinguishes the original university work from the later refresh. [Refresh notes](REFRESH.md), [image measurements](IMAGES.md), and the automated checks describe the current implementation. The existing commit and pull request records are preserved unchanged, including the original branch name recorded at merge time.

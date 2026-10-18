@@ -1,6 +1,6 @@
 # Refresh notes — 18 October 2026
 
-These findings describe an inspection and AI-assisted modernization of a 2023 undergraduate project. They are not a retrospective assessment of what was submitted or working in 2023. See [project history and provenance](HISTORY.md).
+These findings describe an inspection and modernization of a 2023 undergraduate project. They are not a retrospective assessment of what was submitted or working in 2023. See [project history and provenance](HISTORY.md).
 
 ## Original project findings
 

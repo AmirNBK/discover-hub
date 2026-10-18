@@ -1,69 +1,129 @@
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"] });
-import FormInput from "../../components/FormInput/FormInput";
-import profile from '../../assets/icons/profile.svg'
-import Image from "next/image";
-import mapPic from "../../assets/images/mapsicleMap.png";
-import TextArea from "@/components/TextArea/TextArea";
-import marker from '../../assets/icons/marker.svg'
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
-
-export default function ContactUs(props: { placeholder: string }) {
-    return (
-        <div
-            className={`ContactUs flex min-h-screen flex-col items-center ${inter.className}`}
-            style={{ background: "#343333" }}
-        >
-            <div className='HeroSection w-full pt-5 px-20' style={{ fontFamily: 'Inter' }}>
-                <Header active="Contact" />
+import { useState, type FormEvent } from "react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
+import Layout from "@/components/Layout";
+import { requestJSON } from "@/components/AppProvider";
+export default function Contact() {
+  const [busy, setBusy] = useState(false),
+    [error, setError] = useState(""),
+    [success, setSuccess] = useState(false);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setError("");
+    const data = new FormData(event.currentTarget);
+    try {
+      await requestJSON("/api/contact", Object.fromEntries(data));
+      setSuccess(true);
+    } catch (err) {
+      setError(
+        err instanceof Error && err.name !== "TimeoutError"
+          ? err.message
+          : "Could not connect. Please try again.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <Layout title="Get in touch">
+      <section className="container contact-layout">
+        <div className="contact-copy">
+          <span className="eyebrow">GOOD CONVERSATIONS START HERE</span>
+          <h1>
+            A question?
+            <br />A new <em>perspective?</em>
+          </h1>
+          <p className="lead">We’d love to hear it.</p>
+          <p>
+            Found a place we should know about? Have a suggestion, a question,
+            or something that could work better? Leave us a message.
+          </p>
+          <div className="contact-note">
+            <MessageCircle size={24} />
+            <div>
+              <h3>A little hello goes a long way.</h3>
+              <p>
+                Your message is saved securely for the DiscoverHub team to read.
+              </p>
             </div>
-            <div
-                className="flex items-center justify-between pl-6 sm:pl-12 my-6 sm:my-24 sm:bg-black-primary"
-                style={{
-                    height: '700px',
-                    borderRadius: "8px",
-                }}
-            >
-                <div
-                    style={{ width: "100%" }}
-                    className="flex flex-col items-baseline gap-y-6"
-                >
-                    <p style={{ color: "#FFFFFF" }} className="text-3xl">
-                        Get in touch with us
-                    </p>
-
-                    <div className="flex flex-row gap-x-4 items-center">
-                        <Image src={profile} alt="profile" width={50} height={50} />
-                        <p className="text-white rounded-md text-xs p-2"
-                            style={{ border: '1px solid #5A5A5A', width: '70%' }}
-                        > Hi, I’m Amanda. Need help? Use the form below or email me at hello@california_golfclub.org. </p>
-                    </div>
-                    <FormInput placeholder={"Full Name"} label={"Name"} />
-                    <FormInput placeholder={"Email Address"} label={"Email"} />
-                    <TextArea />
-                    <button style={{ background: 'var(--l-2, linear-gradient(135deg, #F9EC7D 0%, #F5B100 100%))' }}
-                        className="rounded-sm px-12 py-3 text-black">
-                        Send my message
-                    </button>
-                </div>
-                <div className="w-full h-full relative lg:block hidden">
-                    <Image alt="marker" src={marker} width={45} unoptimized className="left-1/2 top-1/2 absolute"/>
-                    <Image
-                        alt="mapPic"
-                        src={mapPic}
-                        unoptimized
-                        className="w-full h-full"
-                        style={{
-                            borderRadius: "0px 8px 8px 0px",
-                        }}
-                    />
-                </div>
-            </div>
-
-            <div className='w-full'>
-                <Footer />
-            </div>
+          </div>
+          <div className="privacy-note">
+            <ShieldCheck size={17} /> Your details are only used to handle your
+            message.
+          </div>
         </div>
-    );
+        <div className="form-panel">
+          {success ? (
+            <div className="form-success" role="status">
+              <CheckCircle2 size={46} strokeWidth={1.4} />
+              <h2>Message received.</h2>
+              <p>
+                Thank you for sharing a little of your world with us. Your
+                message is now in our inbox.
+              </p>
+              <button className="button" onClick={() => setSuccess(false)}>
+                Send another message
+              </button>
+            </div>
+          ) : (
+            <>
+              <h2>Say hello.</h2>
+              <p className="muted">
+                A thought, a question, a little inspiration.
+              </p>
+              <form onSubmit={submit} className="stack-form">
+                <label>
+                  Your name
+                  <input
+                    name="name"
+                    autoComplete="name"
+                    placeholder="How should we call you?"
+                    required
+                    minLength={2}
+                    maxLength={100}
+                  />
+                </label>
+                <label>
+                  Email address
+                  <input
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    required
+                    maxLength={254}
+                  />
+                </label>
+                <label>
+                  Your message
+                  <textarea
+                    name="message"
+                    placeholder="Tell us what’s on your mind…"
+                    rows={5}
+                    required
+                    minLength={10}
+                    maxLength={5000}
+                  />
+                </label>
+                {error && (
+                  <p className="form-error" role="alert">
+                    {error}
+                  </p>
+                )}
+                <button className="button" type="submit" disabled={busy}>
+                  {busy ? "Sending your message…" : "Send your message"}
+                  <ArrowUpRight size={18} />
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      </section>
+    </Layout>
+  );
 }

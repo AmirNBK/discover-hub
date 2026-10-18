@@ -1,0 +1,21 @@
+# Project history and provenance
+
+## Original undergraduate project
+
+AmirNBK developed DiscoverHub as a bachelor's university project in 2023. Its existing commits remain intact, with their original authorship and timestamps.
+
+The repository state immediately before the modernization is commit [`0028f72d4f7617477db52f3c0ed3541cdf4d581e`](https://github.com/AmirNBK/discover-hub/commit/0028f72d4f7617477db52f3c0ed3541cdf4d581e), dated August 28, 2023. The annotated tag `archive/pre-modernization` preserves that state. This reference identifies the last existing repository snapshot, not a verified university submission milestone.
+
+That version contains the original Next.js application, travel-oriented interface, Leaflet map and routing integration, browser-side place/image API integration, and forms connected to an external account backend. The original report, presentation, or assessment materials should be used to establish the exact scope delivered to the university.
+
+## Subsequent modernization
+
+The changes on `codex/modernize-discover-hub` were made later with AI assistance from Codex at the author's request. They include dependency upgrades, interface redesign, replacement of the external account-server dependency with SQLite-backed accounts and contact storage, changes to place discovery and directions, saved destinations, image replacement and optimization, automated checks, and operating documentation.
+
+These additions and changes should not be represented as part of the original 2023 submission. In particular, the current local backend and the original external-backend integration are different implementations. Existing remote accounts were not migrated. Live nearby discovery needs a current provider key; device-local favourites and contact storage have the limitations described in the README.
+
+## Git history
+
+The refresh is committed on its own branch and submitted through a pull request to `main`. A merge commit preserves both the branch commits and their relationship to the original history. The modernization branch is retained after merging. No original commits are rewritten, squashed, or backdated.
+
+The README distinguishes the original university work from the later AI-assisted refresh. [Refresh notes](REFRESH.md), [image measurements](IMAGES.md), and the automated checks describe the current implementation. Academic presentations should distinguish those two stages and follow the receiving institution's disclosure requirements.

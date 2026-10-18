@@ -1,105 +1,125 @@
 # DiscoverHub
 
-A refreshed destination discovery app built with Next.js 16, React 19, TypeScript, and Leaflet. Browse a handpicked collection, filter and save destinations, explore the map, create an account, and submit contact messages.
+A tourism platform with a **React / Next.js frontend, Python / Django backend, and MongoDB database**. Browse destinations, explore a Leaflet map, save places, create an account, and submit contact messages.
 
 ## Project history
 
-DiscoverHub was originally developed by AmirNBK as a bachelor's university project in 2023. The original commit history is preserved. The [pre-modernization snapshot](https://github.com/AmirNBK/discover-hub/tree/archive/pre-modernization) points to the repository's August 28, 2023 state; it is a historical reference, not a claim about the exact university submission date.
+DiscoverHub was originally developed by AmirNBK as a bachelor's university project in 2023. Original commits are preserved at [archive/pre-modernization](https://github.com/AmirNBK/discover-hub/tree/archive/pre-modernization), the repository's August 28, 2023 snapshot. That snapshot is a historical reference, not a verified university submission date.
 
-The later refresh is preserved on `amirHossein/modernized-and-refactored`. It updates dependencies, changes the interface, adds a local account/contact backend, and improves image delivery. These changes are separate from the original undergraduate implementation. See [the provenance notes](docs/HISTORY.md) for the scope of each version and [the refresh notes](docs/REFRESH.md) for technical findings and limitations.
+The later interface and dependency refresh is preserved on `amirHossein/modernized-and-refactored`. The subsequent `amirHossein/django-mongodb-backend` migration replaces that refresh's temporary SQLite/Next.js backend with Django and MongoDB. These are later implementation changes, recorded separately from the undergraduate work. See [history and provenance](docs/HISTORY.md), [refresh findings](docs/REFRESH.md), and [backend architecture](backend/README.md).
 
 ## Run locally
 
-Use **Node.js 24 or newer** (`.nvmrc` specifies 24). Node's built-in SQLite module supplies the database; no database server or API key is needed for the core app.
+Use **Node.js 24+**. On Windows x64, setup downloads project-local uv, Python 3.13, and MongoDB 8.0.34 from their official distributions. It does not install a Windows service or change PATH. On macOS/Linux, install uv and MongoDB first, or provide an existing MongoDB URI.
 
 ```sh
 npm ci
+npm run setup
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000).
+Open [localhost:3000](http://localhost:3000). The launcher starts MongoDB on loopback port 27018, Django on 8000, and Next.js on 3000. Keep it running while browsing; Ctrl+C stops the stack. Frontend changes reload automatically; restart after Python changes. Accounts and messages persist in `data/mongodb/`.
 
-For a production build:
+Setup honours `HTTPS_PROXY` if your connection needs a proxy. Existing installations can supply `MONGOD_BIN`, `PYTHON_BIN`, or `MONGODB_URI` instead of the bundled runtimes. MongoDB must remain available for accounts, sessions, and contact submissions.
+
+To check the actual open localhost server, run `npm run check:local` in another terminal. It verifies map initialization, marker popups, saved-place filtering, zoom, and search navigation, and checks for missing scripts.
+
+For a local production build:
 
 ```sh
 npm run build
 npm start
 ```
 
-Keep the server running while using the app. No Google Fonts, image API, or external account backend is required. Node may print an experimental SQLite notice on versions where that API is still labelled experimental.
-
-For local browsing and editing, keep `npm run dev` running. It uses `.next-dev/`, separate from the production `.next/` build, so running production checks does not invalidate the open development app. If using `npm start`, stop it before rebuilding, then start it again after the build finishes. Replacing a production build underneath a running server can return 404 responses for the JavaScript manifests and leave interactive pages on their loading screen.
-
-To check the actual server open on localhost:3000, run `npm run check:local` in another terminal. This verifies map initialization, marker popups, favourites, and search navigation, and reports missing application scripts. It uses the running server; the normal test suite instead starts an isolated production server on port 3100.
+Development uses `.next-dev/`, separate from production `.next/`, so production checks do not replace files used by the development server. Stop a production server before rebuilding, then restart it. Replacing its build while it is running can leave interactive pages on their loading screen.
 
 ## Features
 
-- Responsive home, about, contact, login, registration, privacy, saved places, destination detail, and 404 pages.
-- Search by destination, region, country, or category across the curated collection.
-- Category filters, empty states, and saved places that persist in this browser.
-- Client-only Leaflet map, destination selection, markers, permission-aware geolocation, and external Google Maps directions.
-- Registration, sign-in, session persistence, and sign-out backed by SQLite. Passwords use salted scrypt hashes. Session tokens are hashed in the database; cookies are HTTP-only, SameSite=Lax, and Secure in production.
-- Validated contact submissions saved to the database. Read the latest 100 with `npm run messages`.
-- Optional live nearby discovery using the current Foursquare Places API through a server-side endpoint.
+- Responsive home, about, contact, sign-in, registration, privacy, saved places, destination detail, photo credits, and 404 pages.
+- Search and category filtering across four curated destinations; browser-local saved places.
+- Browser-only Leaflet map, marker selection, permission-aware geolocation, and external Google Maps directions.
+- Django registration, sign-in, session persistence, and sign-out backed by MongoDB. Passwords use salted Django PBKDF2 hashes. Session tokens are stored as hashes, expire after seven days, and use HTTP-only, SameSite=Lax cookies, Secure in production.
+- Validated contact submissions stored in MongoDB; read the latest 100 using `npm run messages`.
+- Optional live nearby discovery through a server-side Foursquare integration.
+- Licensed high-resolution local photographs delivered in responsive AVIF/WebP sizes with separate card and banner crops. See [photo credits](assets/photos/CREDITS.md) and [image measurements](docs/IMAGES.md).
 
-Saved destinations are **device-local**, including when signed in. Contact messages are stored, not automatically emailed. Destination photographs are stored locally and served in responsive AVIF/WebP sizes, with separate card and banner crops. See [photo sources and licenses](assets/photos/CREDITS.md). Directions open a separate provider instead of the old public demo routing service.
+Saved places stay in the current browser, including when signed in. Contact messages are stored rather than emailed. Search filters the curated collection; it is not a worldwide city geocoder. Without a Foursquare key, location still centres the map and sorts the curated collection by straight-line distance.
 
 ## Configuration
 
-Copy `.env.example` to `.env.local` and restart the server to change defaults:
+Copy `.env.example` to `.env.local` if you need to change the defaults, then restart the stack. Explicit shell variables take priority. All secrets below stay on the server.
 
-| Variable             | Purpose                                                                                                           |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_PATH`      | SQLite file. Defaults to `data/discover-hub.sqlite`.                                                              |
-| `FOURSQUARE_API_KEY` | A fresh Foursquare **Service API key** for live nearby discovery. Server-only; never use a `NEXT_PUBLIC_` prefix. |
+| Variable               | Purpose                                                                                                                |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `MONGODB_URI`          | Defaults to `mongodb://127.0.0.1:27018`. The launcher manages this local server; other URIs must already be available. |
+| `MONGODB_DATABASE`     | Defaults to `discoverhub`.                                                                                             |
+| `BACKEND_URL`          | Django URL when running the frontend separately; defaults to `http://127.0.0.1:8000`.                                  |
+| `BACKEND_PROXY_TOKEN`  | Shared server-only token for authenticated connection-IP forwarding; generated by the local launcher.                  |
+| `DJANGO_DEBUG`         | Defaults to `true` for local use; set `false` in production.                                                           |
+| `DJANGO_SECRET_KEY`    | Required random secret when debug is disabled.                                                                         |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated backend hostnames.                                                                                     |
+| `FRONTEND_ORIGINS`     | Exact allowed origins for JSON mutations. Local defaults include ports 3000 and 3100.                                  |
+| `DJANGO_COOKIE_SECURE` | Defaults to true outside debug mode. Use HTTPS in production.                                                          |
+| `FOURSQUARE_API_KEY`   | A fresh Foursquare **Service API key** for live nearby discovery.                                                      |
 
-Without a key, choosing “Use my location” centres the map and explains that live nearby discovery is not connected. The handpicked collection remains available and is sorted by straight-line distance. Search filters this collection; it is not a worldwide city geocoder.
+The provider uses the [current Foursquare Places endpoint](https://docs.foursquare.com/fsq-developers-places/reference/place-search), Bearer authentication, and version `2025-06-17`. The original V3 endpoint [was deprecated](https://docs.foursquare.com/developer/reference/upcoming-changes). Old browser-embedded keys were removed from current source; the owner must rotate them because they remain in Git history.
 
-The integration uses the [current Foursquare Places endpoint](https://docs.foursquare.com/fsq-developers-places/reference/place-search), Bearer authentication, and version `2025-06-17`. The original V3 endpoint [has been deprecated](https://docs.foursquare.com/developer/reference/upcoming-changes). Old browser-embedded keys were removed from active source; rotate/revoke them in the provider dashboards because they remain in Git history.
+Run `npm run backend -- initdb` to apply migrations and MongoDB expiry indexes manually. The normal stack launcher also does this without resetting data.
 
-If `DATABASE_PATH` is set only in `.env.local`, read messages with `node --env-file=.env.local scripts/messages.mjs`. Otherwise `npm run messages` uses the default file or the shell environment variable.
+## Migrating the previous local data
+
+Back up the previous SQLite file, then run:
+
+```sh
+npm run backend -- import_sqlite data/discover-hub.sqlite
+```
+
+The importer opens the source read-only. It preserves existing MongoDB accounts, avoids duplicate message imports, and copies valid sessions for imported accounts. Legacy scrypt passwords continue working and upgrade to Django PBKDF2 after a successful sign-in. Use one original source database: legacy message IDs identify repeat imports from that source. Old remote-backend users are not available to this importer.
 
 ## Verification
 
 ```sh
 npm run typecheck
 npm run lint
+npm run backend -- check
+npm run backend -- test explorer --noinput
 npm run build
 npx playwright install chromium
 npm test
 npm audit --omit=dev
 ```
 
-Tests start a production server on port 3100 using `data/test-discover-hub.sqlite`, separate from application data. Desktop, mobile, and API checks cover account sessions, forms, search, filters, favourites, navigation, every page, content images, overflow, geolocation denial, unavailable services, nearby results, and tile failures. Reports and traces are ignored by Git; visual captures go to `artifacts/`.
+The browser suite starts a production frontend on 3100 and Django on 8100, with a unique `discoverhub_e2e_*` MongoDB database. Application data is not reset. The launcher cleans test data on graceful shutdown; forced process termination may leave an isolated test database. Django tests use `test_discoverhub` by default; point tests at a dedicated MongoDB deployment if that database name already contains data you need.
 
-If the Chromium download is unavailable, use an installed browser:
+Desktop, mobile, API, and retina checks cover sessions, forms, search, filters, favourites, every page, images, overflow, map interactions, geolocation denial, unavailable services, nearby results, and tile failures. Django tests additionally cover database persistence, expired sessions, unique accounts, shared limits, provider mapping, and SQLite import compatibility. Reports and visual captures are ignored by Git.
+
+If Chromium downloads are unavailable, use an installed browser:
 
 ```powershell
 $env:PLAYWRIGHT_CHANNEL='chrome' # or 'msedge'
 npm test
 ```
 
-See [refresh notes and remaining advisories](docs/REFRESH.md) for the investigation and verification details.
-
 ## Hosting and data
 
-Run as a **Node server with a writable, persistent disk**, with HTTPS in production. Set `DATABASE_PATH` to a file on that disk. The default database is intended for a single application instance. An ephemeral serverless filesystem or static export will not preserve accounts and messages. Use a managed database adapter before deploying to multiple instances or an ephemeral platform.
+This branch is prepared for **local operation first**. Production needs a Next.js host, a Django WSGI host, and persistent MongoDB. A frontend-only Vercel deployment does not host Django or MongoDB. Provision those services before publishing this backend change to an existing deployment. `BACKEND_URL` is read at runtime by the frontend adapter.
 
-`data/` is ignored by Git. Back it up before moving or upgrading. For a simple consistent backup, stop the app and copy the entire data directory, including any SQLite WAL files. Never put the database in `public/`.
+Use HTTPS, disable Django debug mode, set a random secret, configure allowed hosts/origins, and enable secure cookies. Use authenticated MongoDB connections restricted to your service network. Django can run with Waitress; its database-backed rate limiter is shared across workers. When hosted separately, set the same `BACKEND_PROXY_TOKEN` on Next.js and Django so only the trusted frontend can forward its connection identity. Client-supplied forwarded headers cannot bypass limits. If a CDN sits in front of Next.js, configure trusted edge identity and abuse controls for that deployment.
 
-The old external account backend is no longer used. Existing remote accounts and messages were not imported. Password reset and email verification are not included. The operator manages data requests, backups, and retention; do not remove the database to fix a sign-in issue.
+`data/`, `.runtime/`, and virtual environments are ignored by Git. Back up MongoDB using supported database backup tools; stop the stack cleanly before copying local database files. Never put database files under `public/`.
 
-API handlers validate input, limit requests, check mutation origins, and use prepared statements. The in-memory limiter is intended for one process and uses the connection IP. A reverse proxy should preserve Host and provide public-facing abuse protection. For a public service, add email delivery/recovery and shared abuse protection as appropriate.
+Password recovery, email verification/delivery, and account-synced favourites are not implemented. The operator manages deletion requests, backups, and retention. Do not delete database files to troubleshoot sign-in.
 
-Map tiles come from [OpenStreetMap](https://www.openstreetmap.org/copyright), with visible attribution. A failed tile request produces a message while destination details and directions remain usable. Follow the [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) and use a dedicated provider for substantial traffic.
+Map tiles come from [OpenStreetMap](https://www.openstreetmap.org/copyright), with visible attribution and failure messages. Follow its [tile usage policy](https://operations.osmfoundation.org/policies/tiles/) and use a dedicated provider for substantial traffic. Tiles and external directions need network access; production geolocation requires HTTPS.
 
 ## Source layout
 
-- `pages/`: public routes and server API handlers; retains the Pages Router.
-- `components/`: layout, forms, cards, shared state, and dynamically loaded map.
+- `pages/`: Next.js routes and a same-origin API transport adapter.
+- `backend/`: Django models, migrations, API views, management commands, tests, and a locked Python environment.
+- `components/`: shared layout, forms, map, cards, and browser state.
 - `lib/destinations.ts`: typed curated collection and filtering.
-- `lib/server/`: SQLite, authentication, validation, request limiting.
-- `styles/globals.css`: responsive design, focus states, reduced-motion support.
-- `tests/`: Playwright browser and API coverage.
+- `styles/globals.css`: responsive design and accessibility styles.
+- `scripts/`: local setup and service lifecycle commands.
+- `tests/`: Playwright browser/API coverage.
 
-Run `npm run format` to format source and documentation.
+Run `npm run format` for frontend formatting. Format Python with `.runtime/uv/uv.exe run --project backend ruff format backend` on Windows, or `uv run --project backend ruff format backend` with an installed uv.

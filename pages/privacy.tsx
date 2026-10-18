@@ -44,9 +44,9 @@ export default function Privacy() {
         <h2>Managing your data</h2>
         <p>
           Contact the operator of this installation to request account or
-          message deletion. Local development data is in the configured SQLite
-          database. This project does not include advertising or analytics
-          trackers.
+          message deletion. Accounts and messages are stored in the configured
+          MongoDB database. This project does not include advertising or
+          analytics trackers.
         </p>
       </article>
     </Layout>

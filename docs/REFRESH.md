@@ -38,13 +38,17 @@ The new browser regression checks the actual localhost server with `npm run chec
 
 ### Full checks
 
-Production build, strict TypeScript checking, ESLint, and production dependency audit pass. `npm audit --omit=dev` reports zero vulnerabilities. Playwright runs against the production build with a separate SQLite database, testing desktop and mobile layouts, account and contact flows, destination search/filter/save behaviour, page rendering, content images, overflow, and map failure handling. See the generated Playwright report for the latest run.
+The Django/MongoDB migration passes five backend integration tests against real MongoDB, 32 production browser/API/image tests (one desktop copy of the mobile-navigation test is intentionally skipped), and both actual-localhost checks. TypeScript, ESLint, Ruff, Django system/migration checks, the production build, and the Node production dependency audit also pass. The backend tests cover persisted accounts/sessions/messages, session expiry, request limits, provider mapping/failure, and repeatable read-only SQLite import with password upgrades. Python dependencies are pinned with hashes in `backend/uv.lock`.
+
+The earlier SQLite refresh also passed the production build, TypeScript checking, ESLint, production dependency audit, and browser tests with a separate SQLite database. The current browser suite instead uses isolated MongoDB databases; see the generated Playwright report for the latest run.
 
 The full development dependency audit still reports five high advisories through `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces`. The latest published `braces` version checked was 3.0.3; it remains covered by the advisory. The suggested forced audit fix downgrades the Next.js lint configuration to 14, so it was not applied. These are lint-tool dependencies, not production dependencies. Some of Next's bundled lint plugins still declare ESLint 9 peer ranges, producing installation warnings with ESLint 10; lint execution was verified.
 
 ## Operational limits
 
-- SQLite needs Node 24+ and a writable persistent disk. The default backend is for one server instance, not ephemeral serverless storage.
+The later Django/MongoDB migration supersedes the SQLite runtime described above. The initial refresh remains preserved in Git. The current [backend notes](../backend/README.md) document models, indexes, API contracts, import compatibility, local launch commands, tests, and deployment requirements.
+
+- Current operation needs Node 24+, Python 3.13, and persistent MongoDB. A frontend-only deployment must be connected to a separately hosted Django service.
 - Contact submissions are stored locally; email delivery, email verification, and password recovery are not configured.
 - Saved destinations stay in the current browser; accounts do not sync favourites.
 - The collection contains four destinations. Search filters that collection; live nearby places require a fresh Foursquare service key.

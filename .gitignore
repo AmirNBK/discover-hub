@@ -41,3 +41,7 @@ next-env.d.ts
 .env
 *.log
 /artifacts-audit.json
+/.runtime/
+/backend/.venv/
+__pycache__/
+*.pyc

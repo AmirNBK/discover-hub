@@ -14,11 +14,10 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "npm run start -- --port 3100",
+    command: "node scripts/stack.mjs test",
     url: "http://localhost:3100",
     reuseExistingServer: false,
     env: {
-      DATABASE_PATH: "data/test-discover-hub.sqlite",
       FOURSQUARE_API_KEY: "",
     },
     timeout: 60000,

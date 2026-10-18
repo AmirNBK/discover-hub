@@ -10,7 +10,7 @@ import {
 } from "react";
 import { X } from "lucide-react";
 
-type User = { id: number; name: string; email: string };
+type User = { id: string; name: string; email: string };
 type Context = {
   user: User | null;
   loading: boolean;

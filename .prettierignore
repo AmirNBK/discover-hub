@@ -1,6 +1,9 @@
 node_modules
 .next
 .next-dev
+.runtime
+backend/.venv
+backend/uv.lock
 data
 artifacts
 test-results

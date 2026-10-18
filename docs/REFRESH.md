@@ -30,6 +30,14 @@ Live nearby discovery now uses the [current Foursquare API](https://docs.foursqu
 
 ## Verification
 
+### Local runtime follow-up
+
+A localhost map stuck at “Getting your map ready…” was traced to a production server still running after its build was replaced. The HTML loaded but three JavaScript manifests returned 404. Development now uses `.next-dev/`, separate from the production `.next/` output. A production server must still be stopped before rebuilding and restarted afterwards.
+
+The new browser regression checks the actual localhost server with `npm run check:local`, including map initialization, marker popups, saved-place filtering, zooming, and navigation back through home search. It also caught a Leaflet CSS zoom completion timer accessing a removed map during route changes. CSS zoom transitions are disabled and result fitting is immediate; destination selection still uses `flyTo`. Page titles now use a single React text child, and the document declares smooth scrolling for Next.js route transitions.
+
+### Full checks
+
 Production build, strict TypeScript checking, ESLint, and production dependency audit pass. `npm audit --omit=dev` reports zero vulnerabilities. Playwright runs against the production build with a separate SQLite database, testing desktop and mobile layouts, account and contact flows, destination search/filter/save behaviour, page rendering, content images, overflow, and map failure handling. See the generated Playwright report for the latest run.
 
 The full development dependency audit still reports five high advisories through `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces`. The latest published `braces` version checked was 3.0.3; it remains covered by the advisory. The suggested forced audit fix downgrades the Next.js lint configuration to 14, so it was not applied. These are lint-tool dependencies, not production dependencies. Some of Next's bundled lint plugins still declare ESLint 9 peer ranges, producing installation warnings with ESLint 10; lint execution was verified.

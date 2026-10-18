@@ -28,6 +28,10 @@ npm start
 
 Keep the server running while using the app. No Google Fonts, image API, or external account backend is required. Node may print an experimental SQLite notice on versions where that API is still labelled experimental.
 
+For local browsing and editing, keep `npm run dev` running. It uses `.next-dev/`, separate from the production `.next/` build, so running production checks does not invalidate the open development app. If using `npm start`, stop it before rebuilding, then start it again after the build finishes. Replacing a production build underneath a running server can return 404 responses for the JavaScript manifests and leave interactive pages on their loading screen.
+
+To check the actual server open on localhost:3000, run `npm run check:local` in another terminal. This verifies map initialization, marker popups, favourites, and search navigation, and reports missing application scripts. It uses the running server; the normal test suite instead starts an isolated production server on port 3100.
+
 ## Features
 
 - Responsive home, about, contact, login, registration, privacy, saved places, destination detail, and 404 pages.

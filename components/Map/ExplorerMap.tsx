@@ -48,7 +48,7 @@ function Viewport({
     } else if (places.length)
       map.fitBounds(
         L.latLngBounds(places.map((p) => [p.latitude, p.longitude])),
-        { padding: [60, 60], maxZoom: 11 },
+        { padding: [60, 60], maxZoom: 11, animate: false },
       );
   }, [map, lat, lng, userLat, userLng, places]);
   return null;
@@ -77,6 +77,9 @@ export default function ExplorerMap({
         center={[46.6943, 12.0856]}
         zoom={6}
         className="leaflet-map"
+        // Leaflet's CSS zoom timer can fire after route navigation removes
+        // the map. flyTo still animates and cancels its frames on removal.
+        zoomAnimation={false}
         scrollWheelZoom
         attributionControl
       >

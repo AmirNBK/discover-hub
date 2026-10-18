@@ -17,7 +17,7 @@ export default function Layout({
   return (
     <>
       <Head>
-        <title>{title} | DiscoverHub</title>
+        <title>{`${title} | DiscoverHub`}</title>
         <meta name="description" content={description} />
         <meta name="theme-color" content="#123d32" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

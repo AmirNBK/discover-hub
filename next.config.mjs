@@ -1,5 +1,11 @@
-/** @type {import('next').NextConfig} */
-module.exports = {
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
+
+/** @param {string} phase @returns {import('next').NextConfig} */
+const nextConfig = (phase) => ({
+  // Local editing and production verification must never replace each other's
+  // manifests while a server is still serving them.
+  distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
+  agentRules: false,
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
@@ -22,4 +28,6 @@ module.exports = {
       },
     ];
   },
-};
+});
+
+export default nextConfig;

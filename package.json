@@ -1,45 +1,39 @@
 {
   "name": "discover-hub",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "messages": "node scripts/messages.mjs",
+    "format": "prettier --write pages components lib styles tests scripts *.ts *.js *.mjs *.json *.md",
+    "images:prepare": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.5",
-    "@mui/styled-engine-sc": "^5.12.0",
-    "@types/node": "20.4.0",
-    "@types/react": "18.2.14",
-    "@types/react-dom": "18.2.6",
-    "autoprefixer": "10.4.14",
-    "axios": "^1.4.0",
-    "eslint": "8.44.0",
-    "eslint-config-next": "13.4.9",
     "leaflet": "^1.9.4",
-    "leaflet-defaulticon-compatibility": "^0.1.2",
-    "leaflet-geosearch": "^3.8.0",
-    "leaflet-routing-machine": "^3.2.12",
-    "next": "13.4.9",
-    "next-videos": "^1.4.1",
-    "pexels": "^1.4.0",
-    "postcss": "8.4.25",
-    "primeflex": "^3.3.1",
-    "primeicons": "^6.0.1",
-    "primereact": "^9.6.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-leaflet": "^4.2.1",
-    "sass": "^1.64.2",
-    "styled-components": "^5.3.11",
-    "tailwindcss": "3.3.2",
-    "typescript": "5.1.6"
+    "lucide-react": "^1.59.0",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.3"
+    "@playwright/test": "^1.64.1",
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^10.13.0",
+    "eslint-config-next": "16.4.2",
+    "prettier": "^3.9.10",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.3"
   }
 }

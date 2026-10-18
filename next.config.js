@@ -1,16 +1,25 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+  reactStrictMode: true,
+  poweredByHeader: false,
   images: {
-    remotePatterns: [
-      {
-        hostname: 'images.pexels.com',
-      },
-    ],
+    formats: ["image/avif", "image/webp"],
+    qualities: [80],
+    deviceSizes: [360, 480, 640, 768, 960, 1280, 1600, 1920, 2560],
+    imageSizes: [48, 80, 96, 128, 160, 192, 256],
+    minimumCacheTTL: 2592000,
   },
-}
-
-
-// const withVideos = require('next-videos');
-
-// module.exports = withVideos();
-
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Permissions-Policy", value: "geolocation=(self)" },
+        ],
+      },
+    ];
+  },
+};

@@ -1,47 +1,85 @@
-import React from 'react';
-import logo from '../../assets/icons/mainLogo.svg'
-import Image from 'next/image';
-import Link from 'next/link';
-
-const Header = (props: {
-    active: string
-}) => {
-    const active = props.active
-    const pages = [
-        { title: 'Home', link: '/' },
-        { title: 'Map', link: '/map' },
-        { title: 'About', link: '/about-us' },
-        { title: 'Contact', link: '/contact-us' }
-    ];
-    return (
-        <div className='Header flex-col gap-6 md:flex-row flex items-center justify-between relative'
-            style={{ zIndex: '3000000000' }}>
-            <Link href={'/'} className='Header__logoSection text-white flex flex-row items-center gap-2'>
-                <Image src={logo} alt='mainLogo' className='w-12' unoptimized />
-                <p className='font-extrabold'> DiscoverHub </p>
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { ArrowUpRight, Compass, Menu, X } from "lucide-react";
+import { useApp } from "../AppProvider";
+export default function Header() {
+  const { pathname, asPath } = useRouter();
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const open = openPath === asPath;
+  const { user, logout } = useApp();
+  const links = [
+    { label: "Discover", href: "/" },
+    { label: "Explore map", href: "/map" },
+    { label: "Our story", href: "/about-us" },
+    { label: "Get in touch", href: "/contact-us" },
+  ];
+  return (
+    <header className="site-header">
+      <div className="container header-inner">
+        <Link href="/" className="brand" aria-label="DiscoverHub home">
+          <span className="brand-mark">
+            <Compass size={25} strokeWidth={1.8} />
+          </span>
+          <span>
+            discover<span className="brand-light">hub</span>
+            <span className="brand-dot">.</span>
+          </span>
+        </Link>
+        <button
+          className="menu-toggle"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-expanded={open}
+          aria-controls="main-navigation"
+          onClick={() => setOpenPath(open ? null : asPath)}
+        >
+          {open ? <X /> : <Menu />}
+        </button>
+        <nav
+          id="main-navigation"
+          aria-label="Main navigation"
+          className={`main-nav ${open ? "open" : ""}`}
+        >
+          {links.map((link) => (
+            <Link
+              href={link.href}
+              key={link.href}
+              onClick={() => setOpenPath(null)}
+              aria-current={pathname === link.href ? "page" : undefined}
+            >
+              {link.label}
             </Link>
-
-            <div className='Header__pagesSection flex gap-6 text-white text-sm'>
-                {pages.map((item: { title: string; link: string }, index: number) => {
-                    return (
-                        <div className='cursor-pointer' key={index}>
-                            <Link href={item.link} className={` ${item.title === active ? 'font-bold' : 'font-normal'}`}
-                                style={{ color: item.title === active ? '#fff' : '#ffffff99' }}> {item.title} </Link>
-                        </div>
-                    )
-                })}
-            </div>
-
-            <div className='Header__signInSection flex items-center gap-4'>
-                <Link href={'/sign-up'}>
-                    <p className='text-white text-xs md:text-sm cursor-pointer'> Register </p>
-                </Link>
-                <Link href={'/login'}>
-                    <button className='bg-white font-bold text-xs md:text-sm rounded-full py-2	px-8'> Login </button>
-                </Link>
-            </div>
+          ))}
+          <div className="mobile-account">
+            {user ? (
+              <button onClick={logout}>Sign out</button>
+            ) : (
+              <Link href="/login">Sign in</Link>
+            )}
+          </div>
+        </nav>
+        <div className="header-account">
+          {user ? (
+            <>
+              <span className="user-greeting">
+                Hi, {user.name.split(" ")[0]}
+              </span>
+              <button className="button small secondary" onClick={logout}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="signin">
+                Sign in
+              </Link>
+              <Link href="/map" className="button small">
+                Let’s explore <ArrowUpRight size={16} />
+              </Link>
+            </>
+          )}
         </div>
-    );
-};
-
-export default Header;
+      </div>
+    </header>
+  );
+}

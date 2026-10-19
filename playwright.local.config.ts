@@ -6,6 +6,14 @@ import config from "./playwright.config";
 export default defineConfig({
   ...config,
   webServer: undefined,
+  outputDir: "artifacts/local-test-results",
+  reporter: [
+    ["list"],
+    [
+      "html",
+      { outputFolder: "artifacts/local-playwright-report", open: "never" },
+    ],
+  ],
   testMatch: "bootstrap.spec.ts",
   use: { ...config.use, baseURL: "http://localhost:3000" },
   projects: config.projects?.filter((project) =>

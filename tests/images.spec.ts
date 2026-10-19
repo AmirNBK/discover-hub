@@ -32,6 +32,7 @@ test("photos stay sharp at the screen density and within download budgets", asyn
     "/sign-up",
   ]) {
     await page.goto(route);
+    if (route === "/") await expect(page.locator(".place-card")).toHaveCount(4);
     const routeUrls = new Set<string>();
     for (const image of await page.locator("main img").all()) {
       await image.scrollIntoViewIfNeeded();

@@ -9,7 +9,7 @@ import lake from "@/assets/photos/braies-hero.webp";
 import { photoQuality, photoSizes } from "@/lib/image-config";
 
 export default function AuthForm({ register = false }: { register?: boolean }) {
-  const { user, setUser, notify } = useApp();
+  const { user, setSession, notify } = useApp();
   const router = useRouter();
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -24,7 +24,7 @@ export default function AuthForm({ register = false }: { register?: boolean }) {
         `/api/auth/${register ? "register" : "login"}`,
         data,
       );
-      setUser(result.user);
+      setSession(result);
       notify(
         register
           ? "Your account is ready. Let’s explore."

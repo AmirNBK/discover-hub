@@ -10,9 +10,9 @@ from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 from django.http import JsonResponse
 
-from .models import ContactMessage, Session, User
+from .models import ContactMessage, SavedPlace, Session, User
 from .security import (
-    current_user,
+    current_account,
     password_matches,
     prepare,
     start_session,
@@ -23,6 +23,20 @@ from .security import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def saved_ids(user):
+    if user is None:
+        return []
+    return list(
+        SavedPlace.objects.filter(user=user, destination__published=True).values_list(
+            "destination__slug", flat=True
+        )
+    )
+
+
+def session_data(user):
+    return {"user": user.public() if user else None, "saved": saved_ids(user)}
 
 
 def api(methods, scope=None, limit=0):
@@ -78,7 +92,7 @@ def auth(request, data, action):
     if failure is not None:
         return failure
     if action == "me":
-        return JsonResponse({"user": current_user(request)})
+        return JsonResponse(session_data(current_account(request)))
     if action == "logout":
         Session.objects.filter(
             token_hash=token_hash(request.COOKIES.get("dh_session", ""))
@@ -130,7 +144,7 @@ def auth(request, data, action):
             )
         upgrade_password(user, password)
     response = JsonResponse(
-        {"user": user.public()}, status=201 if action == "register" else 200
+        session_data(user), status=201 if action == "register" else 200
     )
     start_session(response, user)
     return response

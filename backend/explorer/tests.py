@@ -9,10 +9,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from django.core.management import call_command
-from django.test import TransactionTestCase, override_settings
+from django.core.management.base import CommandError
+from django.test import Client, TransactionTestCase, override_settings
 from django.utils import timezone
 
-from .models import ContactMessage, RateWindow, Session, User
+from .models import ContactMessage, Destination, RateWindow, SavedPlace, Session, User
 
 
 @override_settings(ALLOWED_HOSTS=["testserver", "localhost", "127.0.0.1"])
@@ -176,3 +177,199 @@ class ApiTests(TransactionTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(User.objects.get().password.startswith("pbkdf2_sha256$"))
+
+
+@override_settings(ALLOWED_HOSTS=["testserver", "localhost", "127.0.0.1"])
+class CatalogueTests(TransactionTestCase):
+    def setUp(self):
+        self.source = Path(__file__).parent / "fixtures" / "destinations.json"
+        call_command("import_destinations", self.source, stdout=StringIO())
+
+    def post(self, path, data, client=None):
+        return (client or self.client).post(
+            path, json.dumps(data), content_type="application/json"
+        )
+
+    def register(self, email, client=None):
+        response = self.post(
+            "/api/auth/register",
+            {"name": "Explorer", "email": email, "password": "a-secure-password"},
+            client,
+        )
+        self.assertEqual(response.status_code, 201)
+        return response.json()["user"]["id"]
+
+    def test_catalogue_search_filters_pagination_and_dynamic_metadata(self):
+        first = self.client.get("/api/destinations?limit=2").json()
+        self.assertEqual(first["total"], 4)
+        self.assertEqual(
+            [p["id"] for p in first["destinations"]], ["lake-braies", "lake-garda"]
+        )
+        focused = self.post(
+            "/api/destinations", {"limit": 2, "focus": "cappadocia"}
+        ).json()
+        self.assertEqual(focused["offset"], 2)
+        self.assertEqual(focused["destinations"][-1]["id"], "cappadocia")
+        self.assertEqual(
+            self.post("/api/destinations", {"q": "ITALY"}).json()["total"], 2
+        )
+        self.assertEqual(self.post("/api/destinations", {"q": ".*"}).json()["total"], 0)
+        self.assertEqual(
+            self.client.get("/api/destinations?category=Coast").json()["total"], 1
+        )
+        Destination.objects.filter(slug="lake-garda").update(
+            name="Updated from MongoDB", category="Lakes"
+        )
+        response = self.client.get("/api/destinations").json()
+        self.assertIn("Lakes", response["categories"])
+        self.assertEqual(response["destinations"][1]["name"], "Updated from MongoDB")
+        Destination.objects.filter(slug="lake-garda").update(published=False)
+        self.assertEqual(
+            self.client.get("/api/destinations/lake-garda").status_code, 404
+        )
+        self.assertEqual(self.client.get("/api/destinations").json()["total"], 3)
+        self.assertEqual(
+            self.client.get("/api/destinations/missing-place").status_code, 404
+        )
+        self.assertEqual(
+            self.post("/api/destinations/lake-braies", {}).status_code, 405
+        )
+
+    def test_invalid_filters_are_rejected_and_guest_ids_are_bounded(self):
+        for data in (
+            {"limit": 51},
+            {"limit": 1.5},
+            {"offset": -1},
+            {"q": []},
+            {"q": "x" * 101},
+            {"focus": "../escape"},
+            {"category": "Saved", "ids": ["x"] * 201},
+            {"category": "Saved", "ids": "lake-braies"},
+        ):
+            self.assertEqual(
+                self.post("/api/destinations", data).status_code, 400, data
+            )
+        result = self.post(
+            "/api/destinations",
+            {"category": "Saved", "ids": ["lake-braies", "missing"]},
+        ).json()
+        self.assertEqual(result["total"], 1)
+        self.assertEqual(self.client.get("/api/saved").status_code, 401)
+        self.assertEqual(
+            self.post("/api/saved", {"id": "lake-braies", "saved": True}).status_code,
+            401,
+        )
+
+    def test_saves_are_idempotent_scoped_to_accounts_and_survive_new_sessions(self):
+        owner = self.register("one@example.com")
+        payload = {"id": "lake-braies", "saved": True, "accountId": owner}
+        for _ in range(2):
+            self.assertEqual(self.post("/api/saved", payload).status_code, 200)
+        self.assertEqual(SavedPlace.objects.count(), 1)
+        other = Client()
+        other_id = self.register("two@example.com", other)
+        self.assertEqual(other.get("/api/saved").json()["saved"], [])
+        self.assertEqual(
+            self.post(
+                "/api/destinations", {"category": "Saved", "accountId": owner}, other
+            ).status_code,
+            409,
+        )
+        self.assertEqual(self.post("/api/saved", payload, other).status_code, 409)
+        self.assertEqual(
+            self.post(
+                "/api/destinations",
+                {"category": "Saved", "ids": ["lake-braies"]},
+                other,
+            ).json()["total"],
+            0,
+        )
+        second_device = Client()
+        login = self.post(
+            "/api/auth/login",
+            {"email": "one@example.com", "password": "a-secure-password"},
+            second_device,
+        )
+        self.assertEqual(login.json()["saved"], ["lake-braies"])
+        self.assertEqual(
+            second_device.get("/api/auth/me").json()["saved"], ["lake-braies"]
+        )
+        self.assertEqual(
+            self.post(
+                "/api/saved", {**payload, "saved": False}, second_device
+            ).status_code,
+            200,
+        )
+        self.assertEqual(self.client.get("/api/saved").json()["saved"], [])
+        self.assertEqual(
+            self.post(
+                "/api/saved",
+                {"id": "missing", "saved": True, "accountId": other_id},
+                other,
+            ).status_code,
+            404,
+        )
+
+    def test_explicit_guest_import_merges_only_published_places(self):
+        owner = self.register("import@example.com")
+        Destination.objects.filter(slug="lake-garda").update(published=False)
+        payload = {
+            "accountId": owner,
+            "ids": ["lake-braies", "lake-braies", "lake-garda", "missing"],
+        }
+        for _ in range(2):
+            response = self.post("/api/saved/import", payload)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.json()["accepted"], ["lake-braies"])
+        self.assertEqual(SavedPlace.objects.count(), 1)
+        Destination.objects.filter(slug="lake-braies").update(published=False)
+        self.assertEqual(self.client.get("/api/auth/me").json()["saved"], [])
+        self.assertEqual(SavedPlace.objects.count(), 1)
+        self.assertEqual(
+            self.post(
+                "/api/saved/import", {"accountId": owner, "ids": ["../bad"]}
+            ).status_code,
+            400,
+        )
+
+    def test_operator_import_validates_before_writes_and_preserves_edits_on_startup(
+        self,
+    ):
+        records = json.loads(self.source.read_text(encoding="utf-8"))
+        Destination.objects.filter(slug="lake-braies").update(
+            name="Operator edit", published=False
+        )
+        call_command("import_destinations", self.source, stdout=StringIO())
+        self.assertEqual(
+            Destination.objects.get(slug="lake-braies").name, "Operator edit"
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "destinations.json"
+            record = {
+                **records[0],
+                "id": "new-place-2026",
+                "name": "New place",
+                "photoKey": "",
+                "category": "Culture",
+            }
+            source.write_text(json.dumps([record]), encoding="utf-8")
+            call_command("import_destinations", source, dry_run=True, stdout=StringIO())
+            self.assertFalse(Destination.objects.filter(slug=record["id"]).exists())
+            source.write_text(
+                json.dumps([record, {**records[1], "latitude": 100}]), encoding="utf-8"
+            )
+            with self.assertRaises(CommandError):
+                call_command("import_destinations", source, stdout=StringIO())
+            self.assertFalse(Destination.objects.filter(slug=record["id"]).exists())
+            source.write_text(json.dumps([record]), encoding="utf-8")
+            call_command("import_destinations", source, stdout=StringIO())
+            detail = self.client.get("/api/destinations/new-place-2026")
+            self.assertEqual(detail.status_code, 200)
+            self.assertEqual(detail.json()["destination"]["photoKey"], "")
+            source.write_text(
+                json.dumps([{**record, "name": "Changed name"}]), encoding="utf-8"
+            )
+            call_command("import_destinations", source, update=True, stdout=StringIO())
+            self.assertEqual(
+                Destination.objects.get(slug=record["id"]).name, "Changed name"
+            )

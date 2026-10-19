@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -9,6 +11,10 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         call_command("migrate", interactive=False)
+        call_command(
+            "import_destinations",
+            Path(__file__).resolve().parents[2] / "fixtures" / "destinations.json",
+        )
         database = settings.DATABASES["default"]
         with MongoClient(database["HOST"], serverSelectionTimeoutMS=5000) as client:
             db = client[database["NAME"]]

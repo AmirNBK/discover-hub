@@ -10,11 +10,12 @@ import {
   Wind,
   X,
 } from "lucide-react";
-import { filterDestinations } from "@/lib/destinations";
+import { useDestinations } from "@/lib/catalogue";
+import { CataloguePagination, CatalogueStatus } from "./CatalogueStatus";
 import { useApp } from "./AppProvider";
 import PlaceCard from "./PlaceCard";
 
-const categories = [
+const icons = [
   { label: "All places", icon: Compass },
   { label: "Nature", icon: Mountain },
   { label: "Coast", icon: Waves },
@@ -30,8 +31,15 @@ export default function DestinationExplorer({
 }) {
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState(initialCategory);
-  const { saved } = useApp();
-  const places = filterDestinations(query, category, saved);
+  const { saved, user, refreshSession } = useApp();
+  const catalogue = useDestinations(query, category);
+  const { places } = catalogue;
+  const categories = ["All places", ...catalogue.categories, "Saved"].map(
+    (label) => ({
+      label,
+      icon: icons.find((item) => item.label === label)?.icon || Compass,
+    }),
+  );
   return (
     <section
       className="section container"
@@ -76,6 +84,7 @@ export default function DestinationExplorer({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Find your kind of place"
+            maxLength={100}
           />
           {query && (
             <button aria-label="Clear search" onClick={() => setQuery("")}>
@@ -85,12 +94,26 @@ export default function DestinationExplorer({
         </label>
       </div>
       <div className="result-label" role="status">
-        {places.length} {places.length === 1 ? "place" : "places"} to discover
+        {catalogue.error
+          ? "Places are temporarily unavailable"
+          : catalogue.loading
+            ? "Loading places…"
+            : `${catalogue.total} ${catalogue.total === 1 ? "place" : "places"} to discover`}
         {category === "Saved"
-          ? " · Saved on this device"
+          ? user
+            ? " · Synced to your account"
+            : " · Saved on this device"
           : " · A handpicked collection"}
       </div>
-      {places.length ? (
+      {catalogue.loading || catalogue.error ? (
+        <CatalogueStatus
+          error={catalogue.error}
+          retry={() => {
+            void refreshSession();
+            catalogue.retry();
+          }}
+        />
+      ) : places.length ? (
         <div className="places-grid">
           {places.map((place) => (
             <PlaceCard key={place.id} place={place} />
@@ -120,6 +143,7 @@ export default function DestinationExplorer({
           </button>
         </div>
       )}
+      <CataloguePagination {...catalogue} />
     </section>
   );
 }

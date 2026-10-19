@@ -15,7 +15,12 @@ export default async function handler(
     if (!["http:", "https:"].includes(target.protocol))
       throw new Error("Invalid backend URL");
     const path = req.query.path;
-    if (!Array.isArray(path) || path.some((part) => !/^[a-z-]+$/.test(part)))
+    if (
+      !Array.isArray(path) ||
+      path.some(
+        (part) => !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(part) || part.length > 80,
+      )
+    )
       return res.status(404).json({ error: "Not found." });
     const incoming = new URL(req.url || "/", "http://localhost");
     target.pathname = `/api/${path.join("/")}`;

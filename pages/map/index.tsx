@@ -14,11 +14,12 @@ import {
 } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useApp } from "@/components/AppProvider";
+import { distanceKm } from "@/lib/destinations";
+import { useDestinations } from "@/lib/catalogue";
 import {
-  destinations,
-  distanceKm,
-  filterDestinations,
-} from "@/lib/destinations";
+  CataloguePagination,
+  CatalogueStatus,
+} from "@/components/CatalogueStatus";
 import type { Coordinates, MapPlace } from "@/lib/places";
 import { photoQuality, photoSizes } from "@/lib/image-config";
 const ExplorerMap = dynamic(() => import("@/components/Map/ExplorerMap"), {
@@ -66,17 +67,21 @@ function MapExplorer({
 }) {
   const [query, setQuery] = useState(initialQuery),
     [category, setCategory] = useState("All places");
-  const [selected, setSelected] = useState<string | null>(
-    destinations.some((p) => p.id === initialPlace) ? initialPlace : null,
-  );
+  const [selected, setSelected] = useState<string | null>(initialPlace);
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [nearby, setNearby] = useState<MapPlace[] | null>(null),
     [status, setStatus] = useState(""),
     [busy, setBusy] = useState(false);
   const [mode, setMode] = useState<"curated" | "nearby">("curated");
   const requestId = useRef(0);
-  const { saved, toggleSaved } = useApp();
-  const curated = filterDestinations(query, category, saved);
+  const { saved, toggleSaved, saveDisabled, refreshSession } = useApp();
+  const catalogue = useDestinations(
+    mode === "curated" ? query : "",
+    category,
+    50,
+    initialPlace,
+  );
+  const curated = catalogue.places;
   const places: MapPlace[] =
     mode === "nearby" && nearby !== null
       ? nearby.filter((p) =>
@@ -220,7 +225,7 @@ function MapExplorer({
           <div className="map-filters" role="group" aria-label="Map categories">
             {(mode === "nearby"
               ? ["Nearby"]
-              : ["All places", "Nature", "Coast", "Adventure", "Saved"]
+              : ["All places", ...catalogue.categories, "Saved"]
             ).map((label) => (
               <button
                 key={label}
@@ -236,15 +241,27 @@ function MapExplorer({
           </div>
           <div className="map-result-summary">
             <span>
-              {places.length} {places.length === 1 ? "place" : "places"} ·{" "}
-              {mode === "nearby" ? "Nearby" : "Handpicked for you"}
+              {mode === "curated" && catalogue.error
+                ? "Places are temporarily unavailable"
+                : mode === "curated" && catalogue.loading
+                  ? "Loading places…"
+                  : `${mode === "curated" ? catalogue.total : places.length} ${places.length === 1 ? "place" : "places"}`}{" "}
+              · {mode === "nearby" ? "Nearby" : "Handpicked for you"}
             </span>
             <button onClick={reset}>Reset</button>
           </div>
           <div className="map-results">
-            {places.length ? (
+            {mode === "curated" && (catalogue.loading || catalogue.error) ? (
+              <CatalogueStatus
+                error={catalogue.error}
+                retry={() => {
+                  void refreshSession();
+                  catalogue.retry();
+                }}
+              />
+            ) : places.length ? (
               places.map((place) => {
-                const destination = destinations.find(
+                const destination = curated.find(
                   (p) => p.id === place.id && place.curated,
                 );
                 return (
@@ -257,7 +274,7 @@ function MapExplorer({
                       onClick={() => setSelected(place.id)}
                       aria-pressed={selected === place.id}
                     >
-                      {destination ? (
+                      {destination?.cardImage ? (
                         <div className="map-result-photo">
                           <Image
                             src={destination.cardImage}
@@ -298,6 +315,7 @@ function MapExplorer({
                           <button
                             aria-label={`${saved.includes(place.id) ? "Unsave" : "Save"} ${place.name}`}
                             aria-pressed={saved.includes(place.id)}
+                            disabled={saveDisabled(place.id)}
                             onClick={() => toggleSaved(place.id)}
                           >
                             <Heart
@@ -333,6 +351,7 @@ function MapExplorer({
               </div>
             )}
           </div>
+          {mode === "curated" && <CataloguePagination {...catalogue} />}
           <div className="map-sidebar-footer">
             <Compass size={14} />
             <span>

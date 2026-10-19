@@ -103,14 +103,19 @@ def start_session(response, user):
     )
 
 
-def current_user(request):
+def current_account(request):
     token = request.COOKIES.get("dh_session", "")
     if not re.fullmatch(r"[a-f0-9]{64}", token):
         return None
     session = Session.objects.filter(
         token_hash=token_hash(token), expires_at__gt=timezone.now()
     ).first()
-    return session.user.public() if session else None
+    return session.user if session else None
+
+
+def current_user(request):
+    account = current_account(request)
+    return account.public() if account else None
 
 
 def password_matches(password, stored):

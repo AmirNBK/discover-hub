@@ -28,6 +28,12 @@ Replaced the unresponsive account-server dependency with a local SQLite backend.
 
 Live nearby discovery now uses the [current Foursquare API](https://docs.foursquare.com/fsq-developers-places/reference/place-search) with a server-side service key. It is optional; no valid key was available for a live provider test. The original exposed keys must be rotated by the owner; deleting them from current source does not erase Git history.
 
+### Catalogue and account collections — 19 October 2026
+
+Moved destination metadata from frontend constants into MongoDB. Django now serves published destinations with search, database categories, pagination, and individual detail records. A validated operator import command adds or updates destinations; startup seeds preserve existing edits. Detail pages render newly added slugs without a frontend build. The map fetches bounded pages and resolves deep links to the page containing the selected destination.
+
+Account bookmarks use unique user/destination relations. Guest saves remain local and import only through an explicit action. Account state refreshes on window focus, private bookmarks are cleared from client memory on logout, and failed or stale writes cannot silently become guest saves. Existing optimized photos retain their delivery settings; new records use a designed placeholder until licensed photography is installed.
+
 ## Verification
 
 ### Local runtime follow-up
@@ -38,7 +44,7 @@ The new browser regression checks the actual localhost server with `npm run chec
 
 ### Full checks
 
-The Django/MongoDB migration passes five backend integration tests against real MongoDB, 32 production browser/API/image tests (one desktop copy of the mobile-navigation test is intentionally skipped), and both actual-localhost checks. TypeScript, ESLint, Ruff, Django system/migration checks, the production build, and the Node production dependency audit also pass. The backend tests cover persisted accounts/sessions/messages, session expiry, request limits, provider mapping/failure, and repeatable read-only SQLite import with password upgrades. Python dependencies are pinned with hashes in `backend/uv.lock`.
+The Django/MongoDB migration and catalogue follow-up pass ten backend integration tests against real MongoDB, 40 production browser/API/image tests (one desktop copy of the mobile-navigation test is intentionally skipped), and both actual-localhost checks. TypeScript, ESLint, Ruff, Django system/migration checks, the production build, and the Node production dependency audit also pass. The backend tests cover persisted accounts/sessions/messages, session expiry, request limits, provider mapping/failure, repeatable read-only SQLite import with password upgrades, catalogue imports/search/pagination/publication, and account bookmark isolation/imports. An additional isolated 55-record catalogue check verifies new detail routes, pagination, dynamic categories, map focus beyond its first page, and unpublished 404 responses without changing application data. Python dependencies are pinned with hashes in `backend/uv.lock`.
 
 The earlier SQLite refresh also passed the production build, TypeScript checking, ESLint, production dependency audit, and browser tests with a separate SQLite database. The current browser suite instead uses isolated MongoDB databases; see the generated Playwright report for the latest run.
 
@@ -50,8 +56,8 @@ The later Django/MongoDB migration supersedes the SQLite runtime described above
 
 - Current operation needs Node 24+, Python 3.13, and persistent MongoDB. A frontend-only deployment must be connected to a separately hosted Django service.
 - Contact submissions are stored locally; email delivery, email verification, and password recovery are not configured.
-- Saved destinations stay in the current browser; accounts do not sync favourites.
-- The collection contains four destinations. Search filters that collection; live nearby places require a fresh Foursquare service key.
+- Guest saves stay in the browser; signed-in saves sync through MongoDB. Device saves are imported only by an explicit action.
+- Four existing destinations seed the database. Validated imports add or update catalogue records without rebuilding the frontend; metadata search and pagination run in Django. Live nearby places require a fresh Foursquare service key.
 - Tile delivery and external directions need network access. Production geolocation and secure sessions require HTTPS.
 - A public deployment should use suitable reverse-proxy abuse protection, data retention, backups, and an appropriate tile-provider plan.
 

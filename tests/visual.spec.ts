@@ -6,6 +6,7 @@ test("capture the finished home and map layouts", async ({
 }, testInfo) => {
   mkdirSync("artifacts", { recursive: true });
   await page.goto("/");
+  await expect(page.locator(".place-card")).toHaveCount(4);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   for (const image of await page.locator("main img").all()) {
     await image.scrollIntoViewIfNeeded();
@@ -18,6 +19,9 @@ test("capture the finished home and map layouts", async ({
   });
   await page.goto("/map?place=lake-braies");
   await expect(page.locator(".leaflet-container")).toBeVisible();
+  await expect(page.locator(".map-result.selected")).toContainText(
+    "Lake Braies",
+  );
   await expect(page.locator(".leaflet-tile-loaded").first()).toBeVisible({
     timeout: 15000,
   });

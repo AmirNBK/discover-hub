@@ -29,6 +29,12 @@ def valid_email(value):
     )
 
 
+def valid_proxy_token(request):
+    expected = settings.BACKEND_PROXY_TOKEN
+    supplied = request.headers.get("X-DiscoverHub-Proxy-Token", "")
+    return bool(expected) and hmac.compare_digest(supplied.encode(), expected.encode())
+
+
 def prepare(request, methods, scope=None, limit=0):
     if request.method not in methods:
         response = JsonResponse({"error": "Method not allowed."}, status=405)
@@ -51,10 +57,7 @@ def prepare(request, methods, scope=None, limit=0):
         now = time.time()
         minute = int(now // 60)
         client_ip = request.META.get("REMOTE_ADDR", "unknown")
-        if settings.BACKEND_PROXY_TOKEN and hmac.compare_digest(
-            request.headers.get("X-DiscoverHub-Proxy-Token", ""),
-            settings.BACKEND_PROXY_TOKEN,
-        ):
+        if valid_proxy_token(request):
             try:
                 client_ip = str(
                     ipaddress.ip_address(

@@ -1,6 +1,9 @@
 import hashlib
 import json
+import os
 import sqlite3
+import subprocess
+import sys
 import tempfile
 from contextlib import closing
 from datetime import timedelta
@@ -10,7 +13,7 @@ from unittest.mock import patch
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import Client, TransactionTestCase, override_settings
+from django.test import Client, SimpleTestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 
 from .models import ContactMessage, Destination, RateWindow, SavedPlace, Session, User
@@ -18,6 +21,23 @@ from .models import ContactMessage, Destination, RateWindow, SavedPlace, Session
 
 @override_settings(ALLOWED_HOSTS=["testserver", "localhost", "127.0.0.1"])
 class ApiTests(TransactionTestCase):
+    @override_settings(
+        REQUIRE_BACKEND_PROXY_TOKEN=True,
+        BACKEND_PROXY_TOKEN="private-service-token-for-tests-only",
+    )
+    def test_hosted_backend_requires_authenticated_frontend(self):
+        for token in (None, "invalid", "not-ascii-\u00e9"):
+            headers = {"HTTP_X_DISCOVERHUB_PROXY_TOKEN": token} if token else {}
+            response = self.client.get("/api/health", **headers)
+            self.assertEqual(response.status_code, 403)
+            self.assertEqual(response["Cache-Control"], "no-store")
+        response = self.client.get(
+            "/api/health",
+            HTTP_X_DISCOVERHUB_PROXY_TOKEN="private-service-token-for-tests-only",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["database"], "mongodb")
+
     def post(self, path, data, **headers):
         return self.client.post(
             path, json.dumps(data), content_type="application/json", **headers
@@ -373,3 +393,46 @@ class CatalogueTests(TransactionTestCase):
             self.assertEqual(
                 Destination.objects.get(slug=record["id"]).name, "Changed name"
             )
+
+
+class ProductionSettingsTests(SimpleTestCase):
+    def test_vercel_settings_fail_closed_without_hosted_configuration(self):
+        env = {
+            **os.environ,
+            "VERCEL": "1",
+            "DJANGO_DEBUG": "false",
+            "DJANGO_SECRET_KEY": "s" * 64,
+            "BACKEND_PROXY_TOKEN": "p" * 64,
+            "MONGODB_URI": "mongodb+srv://example.invalid/",
+            "MONGODB_DATABASE": "discoverhub_preview",
+            "FRONTEND_ORIGINS": "https://frontend.example",
+            "VERCEL_URL": "backend-deployment.vercel.app",
+            "VERCEL_PROJECT_PRODUCTION_URL": "backend.vercel.app",
+            "DJANGO_ALLOWED_HOSTS": "",
+            "DJANGO_COOKIE_SECURE": "false",
+        }
+        code = "from config import settings; assert not settings.DEBUG; assert settings.REQUIRE_BACKEND_PROXY_TOKEN; assert settings.SESSION_COOKIE_SECURE; assert 'backend.vercel.app' in settings.ALLOWED_HOSTS; assert 'localhost' not in settings.ALLOWED_HOSTS"
+        folder = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=folder,
+            env=env,
+            capture_output=True,
+            timeout=15,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr.decode())
+        for field, value in (
+            ("BACKEND_PROXY_TOKEN", ""),
+            ("MONGODB_URI", ""),
+            ("DJANGO_SECRET_KEY", "short"),
+            ("DJANGO_DEBUG", "true"),
+            ("FRONTEND_ORIGINS", ""),
+        ):
+            result = subprocess.run(
+                [sys.executable, "-c", "import config.settings"],
+                cwd=folder,
+                env={**env, field: value},
+                capture_output=True,
+                timeout=15,
+            )
+            self.assertNotEqual(result.returncode, 0, field)

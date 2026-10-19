@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "check:local": "playwright test --config playwright.local.config.ts",
+    "check:deployment": "node scripts/check-deployment.mjs",
     "messages": "node scripts/stack.mjs manage show_messages",
     "format": "prettier --write pages components lib styles tests scripts *.ts *.js *.mjs *.json *.md",
     "images:prepare": "node scripts/optimize-images.mjs"

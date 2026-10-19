@@ -37,6 +37,7 @@ const env = {
         DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1",
         FRONTEND_ORIGINS: "http://localhost:3100",
         FOURSQUARE_API_KEY: "",
+        REQUIRE_BACKEND_PROXY_TOKEN: "true",
       }
     : {}),
 };
@@ -192,7 +193,11 @@ try {
     );
     await waitFor(async () => {
       try {
-        return (await fetch(`${env.BACKEND_URL}/api/health`)).ok;
+        return (
+          await fetch(`${env.BACKEND_URL}/api/health`, {
+            headers: { "X-DiscoverHub-Proxy-Token": env.BACKEND_PROXY_TOKEN },
+          })
+        ).ok;
       } catch {
         return false;
       }

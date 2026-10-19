@@ -13,6 +13,9 @@ dependencies = [
 [tool.uv]
 package = false
 
+[tool.vercel]
+entrypoint = "config.wsgi:application"
+
 [dependency-groups]
 dev = ["ruff>=0.15,<1"]
 

@@ -1,4 +1,79 @@
 import { test, expect } from "@playwright/test";
+import { backendHeaders, backendURL, connectionAddress } from "../lib/backend";
+
+test("backend transport uses service secrets and platform-verified client identity", () => {
+  const names = [
+    "VERCEL",
+    "BACKEND_URL",
+    "BACKEND_PROXY_TOKEN",
+    "BACKEND_PROTECTION_BYPASS_SECRET",
+  ];
+  const original = Object.fromEntries(
+    names.map((name) => [name, process.env[name]]),
+  );
+  try {
+    for (const name of names) delete process.env[name];
+    const req = {
+      headers: {
+        "x-vercel-forwarded-for": "192.0.2.10",
+        "x-forwarded-for": "192.0.2.99",
+      },
+      socket: { remoteAddress: "127.0.0.1" },
+    };
+    expect(connectionAddress(req)).toBe("127.0.0.1");
+    process.env.VERCEL = "1";
+    expect(connectionAddress(req)).toBe("192.0.2.10");
+    expect(
+      connectionAddress({
+        ...req,
+        headers: { "x-vercel-forwarded-for": "invalid" },
+      }),
+    ).toBe("127.0.0.1");
+    expect(() => backendURL("/api/health")).toThrow();
+    expect(() => backendHeaders()).toThrow();
+    process.env.BACKEND_URL = "http://backend.example";
+    expect(() => backendURL("/api/health")).toThrow();
+    process.env.BACKEND_URL = "https://backend.example";
+    process.env.BACKEND_PROXY_TOKEN = "p".repeat(64);
+    process.env.BACKEND_PROTECTION_BYPASS_SECRET = "backend-only-bypass";
+    expect(backendURL("/api/health").href).toBe(
+      "https://backend.example/api/health",
+    );
+    expect(backendHeaders().get("X-DiscoverHub-Proxy-Token")).toBe(
+      "p".repeat(64),
+    );
+    expect(backendHeaders().get("x-vercel-protection-bypass")).toBe(
+      "backend-only-bypass",
+    );
+  } finally {
+    for (const name of names) {
+      const value = original[name];
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
+  }
+});
+
+test("the frontend reaches protected Django while direct unauthenticated requests fail", async ({
+  request,
+}) => {
+  expect((await request.get("http://127.0.0.1:8100/api/health")).status()).toBe(
+    403,
+  );
+  const health = await request.get("/api/health");
+  expect(health.status()).toBe(200);
+  expect(await health.json()).toMatchObject({
+    backend: "django",
+    database: "mongodb",
+  });
+  expect(
+    (
+      await request.post("/api/contact", {
+        data: { message: "x".repeat(33000) },
+      })
+    ).status(),
+  ).toBe(413);
+});
 
 test("API validates input, methods, origins and optional service configuration", async ({
   request,

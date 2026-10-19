@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { backendHeaders, backendURL, connectionAddress } from "@/lib/backend";
 
 export const config = { api: { bodyParser: false } };
 
@@ -9,11 +10,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   res.setHeader("Cache-Control", "no-store");
-  const base = process.env.BACKEND_URL || "http://127.0.0.1:8000";
   try {
-    const target = new URL(base);
-    if (!["http:", "https:"].includes(target.protocol))
-      throw new Error("Invalid backend URL");
     const path = req.query.path;
     if (
       !Array.isArray(path) ||
@@ -23,14 +20,14 @@ export default async function handler(
     )
       return res.status(404).json({ error: "Not found." });
     const incoming = new URL(req.url || "/", "http://localhost");
-    target.pathname = `/api/${path.join("/")}`;
+    const target = backendURL(`/api/${path.join("/")}`);
     target.search = incoming.search;
-    const headers = new Headers();
+    const headers = backendHeaders();
     // Only Django can verify this service token; incoming identity headers
     // are replaced with the frontend's actual connection address.
-    if (process.env.BACKEND_PROXY_TOKEN && req.socket.remoteAddress) {
-      headers.set("X-DiscoverHub-Proxy-Token", process.env.BACKEND_PROXY_TOKEN);
-      headers.set("X-DiscoverHub-Client-IP", req.socket.remoteAddress);
+    const address = connectionAddress(req);
+    if (process.env.BACKEND_PROXY_TOKEN && address) {
+      headers.set("X-DiscoverHub-Client-IP", address);
     }
     for (const name of ["content-type", "cookie", "origin"]) {
       const value = req.headers[name];

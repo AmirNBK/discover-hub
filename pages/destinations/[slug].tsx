@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from "next";
+import { backendHeaders, backendURL } from "@/lib/backend";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Heart, MapPin, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
@@ -112,10 +113,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   )
     return { notFound: true };
   try {
-    const response = await fetch(
-      `${process.env.BACKEND_URL || "http://127.0.0.1:8000"}/api/destinations/${slug}`,
-      { signal: AbortSignal.timeout(10000), cache: "no-store" },
-    );
+    const response = await fetch(backendURL(`/api/destinations/${slug}`), {
+      headers: backendHeaders(),
+      signal: AbortSignal.timeout(10000),
+      cache: "no-store",
+      redirect: "manual",
+    });
     if (response.status === 404) return { notFound: true };
     if (!response.ok) throw new Error("Catalogue unavailable");
     const data = await response.json();

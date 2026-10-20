@@ -2,7 +2,26 @@
 
 Deployment target: two Vercel Hobby projects from this repository and one MongoDB Atlas Free (M0) cluster. This preserves Next.js, Django, and MongoDB without a paid web server. Free allowances, personal/non-commercial eligibility, function cold starts, and Atlas inactivity limits apply. A custom domain is optional; the supplied Vercel addresses work with HTTPS.
 
-This file describes the configuration. It does not confirm that a deployment or hosted database has been created. Check `/api/health` on the public frontend to verify the actual running stack.
+The hosted Django backend and frontend preview were verified against Atlas on October 20, 2026. Check `/api/health` on the public frontend to verify the currently published stack; it must identify `django` and `mongodb`. Production is published from `main` after preview validation.
+
+## Hosted resources
+
+| Resource               | Configuration                                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| Public application     | [discover-hub-beryl.vercel.app](https://discover-hub-beryl.vercel.app), Vercel project `discover-hub` |
+| Private Django service | `https://discover-hub-api.vercel.app`, Vercel project `discover-hub-api`, repository root `backend`   |
+| Vercel account scope   | `amirnbks-projects`, Hobby plan, `iad1` function region                                               |
+| MongoDB Atlas          | Dedicated `DiscoverHub` project and `DiscoverHub` cluster, M0 Free, AWS `US_EAST_1`                   |
+| Production database    | `discoverhub`, with its own database-scoped service user                                              |
+| Preview database       | `discoverhub_preview`, with a different database-scoped service user                                  |
+
+Application secrets live in Vercel environment variables. Backend deployment protection remains enabled; only the frontend has its automation bypass secret and shared application token. An unauthenticated request to the backend is expected to fail. Open the public application to test ordinary features.
+
+Hosted checks cover desktop/mobile navigation and maps, registration and secure sessions, contact persistence, cross-session account saves, explicit guest import, API validation, and image download/sharpness budgets. A temporary preview database record verifies catalogue search, new categories, detail rendering without rebuilding, map focus, and unpublished 404 responses; that record is removed afterwards. Production and preview session/rate-window TTL indexes are verified separately.
+
+Live nearby discovery remains optional and requires `FOURSQUARE_API_KEY`. Contact submissions are stored in MongoDB rather than emailed. Local accounts and messages are not copied into either hosted database.
+
+For future changes, deploy and test the backend first, then the frontend preview, and merge with a merge commit. Keep the previous production deployment available for rollback. A rollback changes application code; it does not restore or reset database records.
 
 ## Database
 

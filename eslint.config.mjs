@@ -7,6 +7,8 @@ export default defineConfig([
   globalIgnores([
     ".next/**",
     ".next-dev/**",
+    ".runtime/**",
+    "backend/.venv/**",
     "node_modules/**",
     "playwright-report/**",
     "test-results/**",

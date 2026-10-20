@@ -164,7 +164,7 @@ export default function Home() {
               number: "02",
               icon: Bookmark,
               title: "Make it your collection",
-              text: "See something you love? Tap the heart and keep your favourites together on this device.",
+              text: "See something you love? Tap the heart to keep it, and sign in to take your collection across devices.",
             },
             {
               number: "03",

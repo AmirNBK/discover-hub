@@ -1,14 +1,29 @@
-import type { GetStaticPaths, GetStaticProps } from "next";
+import type { GetServerSideProps } from "next";
+import { backendHeaders, backendURL } from "@/lib/backend";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Heart, MapPin, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useApp } from "@/components/AppProvider";
-import { destinations } from "@/lib/destinations";
+import { withPhotos, type DestinationRecord } from "@/lib/destinations";
 import DestinationPhoto from "@/components/DestinationPhoto";
 
-export default function DestinationPage({ id }: { id: string }) {
-  const place = destinations.find((item) => item.id === id)!;
-  const { saved, toggleSaved } = useApp();
+type Props = { record: DestinationRecord | null };
+export default function DestinationPage({ record }: Props) {
+  const { saved, toggleSaved, saveDisabled } = useApp();
+  if (!record)
+    return (
+      <Layout title="Destination temporarily unavailable">
+        <section className="container section">
+          <h1>A little pause in the journey.</h1>
+          <p>We couldn’t load this destination. Please try again shortly.</p>
+          <button className="button" onClick={() => window.location.reload()}>
+            Try again
+          </button>
+        </section>
+      </Layout>
+    );
+  const place = withPhotos(record);
+  const id = place.id;
   const isSaved = saved.includes(id);
   return (
     <Layout title={place.name} description={place.description}>
@@ -34,6 +49,7 @@ export default function DestinationPage({ id }: { id: string }) {
             className="button secondary"
             onClick={() => toggleSaved(id)}
             aria-pressed={isSaved}
+            disabled={saveDisabled(id)}
           >
             <Heart size={18} fill={isSaved ? "currentColor" : "none"} />
             {isSaved ? "Place saved" : "Save this place"}
@@ -41,9 +57,11 @@ export default function DestinationPage({ id }: { id: string }) {
         </div>
         <div className="destination-cover">
           <DestinationPhoto place={place} />
-          <span className="destination-photo-note">
-            Illustrative photography
-          </span>
+          {place.detailImage && (
+            <span className="destination-photo-note">
+              Illustrative photography
+            </span>
+          )}
         </div>
         <div className="destination-content">
           <div>
@@ -82,10 +100,31 @@ export default function DestinationPage({ id }: { id: string }) {
     </Layout>
   );
 }
-export const getStaticPaths: GetStaticPaths = () => ({
-  paths: destinations.map((place) => ({ params: { slug: place.id } })),
-  fallback: false,
-});
-export const getStaticProps: GetStaticProps = ({ params }) => ({
-  props: { id: params!.slug },
-});
+export const getServerSideProps: GetServerSideProps<Props> = async ({
+  params,
+  res,
+}) => {
+  res.setHeader("Cache-Control", "no-store");
+  const slug = params?.slug;
+  if (
+    typeof slug !== "string" ||
+    slug.length > 80 ||
+    !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)
+  )
+    return { notFound: true };
+  try {
+    const response = await fetch(backendURL(`/api/destinations/${slug}`), {
+      headers: backendHeaders(),
+      signal: AbortSignal.timeout(10000),
+      cache: "no-store",
+      redirect: "manual",
+    });
+    if (response.status === 404) return { notFound: true };
+    if (!response.ok) throw new Error("Catalogue unavailable");
+    const data = await response.json();
+    return { props: { record: data.destination } };
+  } catch {
+    res.statusCode = 503;
+    return { props: { record: null } };
+  }
+};

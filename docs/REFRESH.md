@@ -28,6 +28,12 @@ Replaced the unresponsive account-server dependency with a local SQLite backend.
 
 Live nearby discovery now uses the [current Foursquare API](https://docs.foursquare.com/fsq-developers-places/reference/place-search) with a server-side service key. It is optional; no valid key was available for a live provider test. The original exposed keys must be rotated by the owner; deleting them from current source does not erase Git history.
 
+### Catalogue and account collections — 19 October 2026
+
+Moved destination metadata from frontend constants into MongoDB. Django now serves published destinations with search, database categories, pagination, and individual detail records. A validated operator import command adds or updates destinations; startup seeds preserve existing edits. Detail pages render newly added slugs without a frontend build. The map fetches bounded pages and resolves deep links to the page containing the selected destination.
+
+Account bookmarks use unique user/destination relations. Guest saves remain local and import only through an explicit action. Account state refreshes on window focus, private bookmarks are cleared from client memory on logout, and failed or stale writes cannot silently become guest saves. Existing optimized photos retain their delivery settings; new records use a designed placeholder until licensed photography is installed.
+
 ## Verification
 
 ### Local runtime follow-up
@@ -38,16 +44,26 @@ The new browser regression checks the actual localhost server with `npm run chec
 
 ### Full checks
 
-Production build, strict TypeScript checking, ESLint, and production dependency audit pass. `npm audit --omit=dev` reports zero vulnerabilities. Playwright runs against the production build with a separate SQLite database, testing desktop and mobile layouts, account and contact flows, destination search/filter/save behaviour, page rendering, content images, overflow, and map failure handling. See the generated Playwright report for the latest run.
+The Django/MongoDB migration and catalogue follow-up pass twelve backend integration tests against real MongoDB, 42 production browser/API/image tests (one desktop copy of the mobile-navigation test is intentionally skipped), and both actual-localhost checks. TypeScript, ESLint, Ruff, Django system/migration checks, the production build, and the Node production dependency audit also pass. The backend tests cover persisted accounts/sessions/messages, session expiry, request limits, provider mapping/failure, repeatable read-only SQLite import with password upgrades, catalogue imports/search/pagination/publication, and account bookmark isolation/imports. An additional isolated 55-record catalogue check verifies new detail routes, pagination, dynamic categories, map focus beyond its first page, and unpublished 404 responses without changing application data. Python dependencies are pinned with hashes in `backend/uv.lock`.
+
+The earlier SQLite refresh also passed the production build, TypeScript checking, ESLint, production dependency audit, and browser tests with a separate SQLite database. The current browser suite instead uses isolated MongoDB databases; see the generated Playwright report for the latest run.
 
 The full development dependency audit still reports five high advisories through `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch → braces`. The latest published `braces` version checked was 3.0.3; it remains covered by the advisory. The suggested forced audit fix downgrades the Next.js lint configuration to 14, so it was not applied. These are lint-tool dependencies, not production dependencies. Some of Next's bundled lint plugins still declare ESLint 9 peer ranges, producing installation warnings with ESLint 10; lint execution was verified.
 
+### Free deployment preparation
+
+Added separate Vercel configurations for the Next.js frontend and Python/Django backend, with Atlas Free as the database target. Both frontend API requests and server-rendered destination pages authenticate to the backend. Hosted settings require explicit secrets/database configuration, disable debug, force secure cookies, accept exact Vercel hostnames, and bound MongoDB connection pools. Tests run against a protected backend, including direct-access rejection and Vercel client-identity handling. The read-only `check:deployment` command verifies public health, catalogue records, detail pages, and basic routes. See [deployment instructions](DEPLOYMENT.md).
+
+These changes prepare hosting; they do not establish that accounts are connected or that the hosted stack has been provisioned and verified. The current production site must stay on its existing deployment until the new backend/database are ready.
+
 ## Operational limits
 
-- SQLite needs Node 24+ and a writable persistent disk. The default backend is for one server instance, not ephemeral serverless storage.
+The later Django/MongoDB migration supersedes the SQLite runtime described above. The initial refresh remains preserved in Git. The current [backend notes](../backend/README.md) document models, indexes, API contracts, import compatibility, local launch commands, tests, and deployment requirements.
+
+- Current operation needs Node 24+, Python 3.13, and persistent MongoDB. A frontend-only deployment must be connected to a separately hosted Django service.
 - Contact submissions are stored locally; email delivery, email verification, and password recovery are not configured.
-- Saved destinations stay in the current browser; accounts do not sync favourites.
-- The collection contains four destinations. Search filters that collection; live nearby places require a fresh Foursquare service key.
+- Guest saves stay in the browser; signed-in saves sync through MongoDB. Device saves are imported only by an explicit action.
+- Four existing destinations seed the database. Validated imports add or update catalogue records without rebuilding the frontend; metadata search and pagination run in Django. Live nearby places require a fresh Foursquare service key.
 - Tile delivery and external directions need network access. Production geolocation and secure sessions require HTTPS.
 - A public deployment should use suitable reverse-proxy abuse protection, data retention, backups, and an appropriate tile-provider plan.
 

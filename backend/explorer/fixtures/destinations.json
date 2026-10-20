@@ -1,0 +1,86 @@
+[
+  {
+    "id": "lake-braies",
+    "name": "Lake Braies",
+    "region": "South Tyrol",
+    "country": "Italy",
+    "category": "Nature",
+    "imageAlt": "A wooden boathouse on Lake Braies beneath the Dolomites at sunset",
+    "latitude": 46.6943,
+    "longitude": 12.0856,
+    "tagline": "A little closer to the extraordinary.",
+    "description": "Still turquoise water. Pine-covered shores. Peaks that seem to touch the sky. Tucked into the Dolomites, Lake Braies is an invitation to slow down and take the scenic route.",
+    "highlights": [
+      "Walk the lakeside trail",
+      "Take in the Dolomite peaks",
+      "Find a quiet spot by the water"
+    ],
+    "tip": "Check local access and parking arrangements before travelling; seasonal restrictions may apply.",
+    "photoKey": "lake-braies",
+    "published": true,
+    "sortOrder": 0
+  },
+  {
+    "id": "lake-garda",
+    "name": "Lake Garda",
+    "region": "Northern Italy",
+    "country": "Italy",
+    "category": "Nature",
+    "imageAlt": "Mountains and distant town lights reflected in Lake Garda at night",
+    "latitude": 45.8834,
+    "longitude": 10.8437,
+    "tagline": "Take the long way around.",
+    "description": "Follow the shoreline past little harbours, dramatic cliffs, and colourful lakeside towns. Lake Garda brings mountain scenery and a slower Italian rhythm together in one beautiful place.",
+    "highlights": [
+      "Explore the lakeside towns",
+      "Follow a scenic walking path",
+      "Watch the boats from the harbour"
+    ],
+    "tip": "Choose a town as your base and check local ferry timetables before planning a day on the lake.",
+    "photoKey": "lake-garda",
+    "published": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "koh-lipe",
+    "name": "Koh Lipe",
+    "region": "Satun",
+    "country": "Thailand",
+    "category": "Coast",
+    "imageAlt": "A long-tail boat beside the white sand and turquoise water of Koh Lipe",
+    "latitude": 6.4877,
+    "longitude": 99.3054,
+    "tagline": "Trade your everyday for ocean blue.",
+    "description": "Long-tail boats drift over clear water, sandy paths lead to the sea, and the day follows the tide. This small island in southern Thailand is made for unhurried exploration.",
+    "highlights": [
+      "Walk along the sandy shores",
+      "Explore responsibly by boat",
+      "Catch a beachside sunset"
+    ],
+    "tip": "Boat services depend on weather and season. Check conditions locally and respect marine park rules.",
+    "photoKey": "koh-lipe",
+    "published": true,
+    "sortOrder": 2
+  },
+  {
+    "id": "cappadocia",
+    "name": "Cappadocia",
+    "region": "Central Anatolia",
+    "country": "Türkiye",
+    "category": "Adventure",
+    "imageAlt": "Hot-air balloons above snow-covered valleys in Cappadocia",
+    "latitude": 38.6431,
+    "longitude": 34.8289,
+    "tagline": "Let your curiosity take flight.",
+    "description": "Discover sculpted valleys, cave architecture, and a landscape that feels like another world. Start with a walk, follow a new trail, and leave room for a little wonder.",
+    "highlights": [
+      "Explore the valleys on foot",
+      "Discover Göreme",
+      "Watch the morning balloons"
+    ],
+    "tip": "Balloon flights are weather-dependent. Confirm availability and safety details directly with a licensed operator.",
+    "photoKey": "cappadocia",
+    "published": true,
+    "sortOrder": 3
+  }
+]

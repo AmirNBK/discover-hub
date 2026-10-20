@@ -1,8 +1,17 @@
 import { getImageProps } from "next/image";
+import { MapPin } from "lucide-react";
 import type { Destination } from "@/lib/destinations";
 import { photoQuality, photoSizes } from "@/lib/image-config";
 
 export default function DestinationPhoto({ place }: { place: Destination }) {
+  if (!place.cardImage || !place.detailImage)
+    return (
+      <div className="destination-placeholder">
+        <MapPin size={48} />
+        <span>{place.name}</span>
+        <small>Photography coming soon</small>
+      </div>
+    );
   const shared = {
     alt: place.imageAlt,
     fill: true,

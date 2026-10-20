@@ -11,9 +11,12 @@ export default function Privacy() {
         </h1>
         <h2>Your saved places</h2>
         <p>
-          Your favourites are stored in this browser’s local storage. They are
-          not synced to your account or other devices. Clear the website’s
-          browser data to remove them.
+          Guest favourites are stored in this browser’s local storage. When
+          signed in, favourites are stored with your account and available on
+          other devices using this installation. You can choose to copy device
+          saves into your account from the saved places page. Signing out hides
+          account saves; it does not delete them. Remove a place using its heart
+          button, or clear browser data to remove guest saves.
         </p>
         <h2>Your account</h2>
         <p>
@@ -44,9 +47,9 @@ export default function Privacy() {
         <h2>Managing your data</h2>
         <p>
           Contact the operator of this installation to request account or
-          message deletion. Local development data is in the configured SQLite
-          database. This project does not include advertising or analytics
-          trackers.
+          message deletion. Accounts and messages are stored in the configured
+          MongoDB database. This project does not include advertising or
+          analytics trackers.
         </p>
       </article>
     </Layout>
